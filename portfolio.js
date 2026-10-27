@@ -14,8 +14,8 @@
       const angle = (-90 + i * 360 / featured.length) * Math.PI / 180;
       const title = p.heroTitle || p.title;
       const label = p.heroTag || (p.category === 'branding' ? 'BRANDING' : p.id === 'gran-minha-conta' ? 'APP MOBILE' : p.id === 'fala-fin' ? 'SITE & APP' : 'CONCEITO');
-      const name = p.visual === 'gran' ? '<div class="hero-gran-name" aria-hidden="true">gran.</div>' : p.visual === 'fin' ? '<div class="hero-fin-label" aria-hidden="true">FALA, FIN<span>✳</span></div>' : '';
-      return `<a class="hero-project hero-card-${p.visual}" data-project="${p.name}" data-project-id="${p.id}" href="${caseUrl(p.id)}" aria-label="Abrir case ${p.name}" style="--orbit-x:${Math.cos(angle).toFixed(5)};--orbit-y:${Math.sin(angle).toFixed(5)};--card-tilt:${i % 2 ? 8 : -8}deg">${name}<img src="${asset(heroImage(p))}" alt="" width="${p.id === 'fala-fin' ? 402 : p.width}" height="${p.id === 'fala-fin' ? 981 : p.height}" decoding="async"><span class="hero-project-tag">${number(i + 1)} / ${label}</span><strong>${title.join('<br>')}</strong><span class="hero-project-arrow" aria-hidden="true">↗</span></a>`;
+      const stackTilt = ((i - (featured.length - 1) / 2) * 2.2).toFixed(1);
+      return `<a class="hero-project hero-card-${p.visual}" data-project="${p.name}" data-project-id="${p.id}" href="${caseUrl(p.id)}" aria-label="Abrir case ${p.name}" style="--orbit-x:${Math.cos(angle).toFixed(5)};--orbit-y:${Math.sin(angle).toFixed(5)};--card-tilt:${i % 2 ? 8 : -8}deg;--card-i:${i};--stack-tilt:${stackTilt}deg">${name}<img src="${asset(heroImage(p))}" alt="" width="${p.id === 'fala-fin' ? 402 : p.width}" height="${p.id === 'fala-fin' ? 981 : p.height}" decoding="async"><span class="hero-project-tag">${number(i + 1)} / ${label}</span><strong>${title.join('<br>')}</strong><span class="hero-project-arrow" aria-hidden="true">↗</span></a>`;
     }).join('');
     document.querySelectorAll('[data-hero-total]').forEach(el => el.textContent = number(featured.length));
   }

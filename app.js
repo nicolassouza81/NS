@@ -51,6 +51,19 @@ document.getElementById('hero-fan')?.addEventListener('keydown',e=>{
   if(e.target===e.currentTarget&&e.key==='Enter'){e.preventDefault();heroLink?.click();}
 });
 selectHeroProject(0);
+const heroStage = document.querySelector('.hero-stage');
+if (heroStage) {
+  if (reduce) {
+    heroStage.classList.add('is-bloomed', 'bloom-complete');
+  } else {
+    setTimeout(() => {
+      heroStage.classList.add('is-bloomed');
+      setTimeout(() => {
+        heroStage.classList.add('bloom-complete');
+      }, 1600);
+    }, 280);
+  }
+}
 const connectionSection=document.querySelector('.connections');const connectionTiles=Array.from(document.querySelectorAll('.connection-tile'));let connectionTicking=false;
 function moveConnections(){if(!connectionSection||reduce)return;const rect=connectionSection.getBoundingClientRect();const progress=Math.max(-1,Math.min(1,(innerHeight/2-(rect.top+rect.height/2))/innerHeight));connectionTiles.forEach((tile,i)=>tile.style.setProperty('--conn-y',`${progress*(i%2===0?24:-24)}px`));connectionTicking=false}
 if(connectionSection&&!reduce){addEventListener('scroll',()=>{if(!connectionTicking){connectionTicking=true;requestAnimationFrame(moveConnections)}},{passive:true});moveConnections()}
