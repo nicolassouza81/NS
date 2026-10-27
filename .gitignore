@@ -1,0 +1,11 @@
+# Local snapshots created while editing the portfolio
+.backup-*/
+
+# Local configuration and temporary files
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+Desktop.ini

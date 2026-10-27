@@ -1,0 +1,18 @@
+PORTFÓLIO — NÍCOLAS SOUZA
+
+Este pacote contém os arquivos HTML, CSS, JavaScript, imagens, a página completa de projetos e as páginas dos cases.
+
+COMO TESTAR NO COMPUTADOR
+1. Extraia o ZIP para uma pasta.
+2. Execute um servidor local a partir da pasta extraída. Se tiver Python instalado, abra o terminal nessa pasta e execute:
+   python -m http.server 8000
+3. Acesse http://localhost:8000 no navegador.
+
+HOSPEDAGEM
+Envie index.html, style.css, portfolio.css, app.js, projects.js, portfolio.js e as pastas assets, cases e projetos para a pasta pública do domínio, por exemplo public_html na Hostinger. Os caminhos relativos também permitem hospedar em subpastas, como localhost/ns/. Não publique as pastas iniciadas por .backup-, que contêm cópias de segurança anteriores aos ajustes.
+
+PROJETOS
+A página projetos/index.html reúne o catálogo completo, com filtros e busca. O catálogo compartilhado fica em projects.js. Para acrescentar um projeto, crie sua página em cases/<identificador>/index.html, adicione a imagem a assets e cadastre os dados em projects.js. As categorias disponíveis são ux, branding e art.
+Os projetos do hero são definidos pela lista featured em projects.js; a ordem nessa lista determina a ordem da órbita. O HTML da home também mantém uma seleção estática como alternativa sem JavaScript. A listagem abaixo exclui esses identificadores e exibe no máximo cinco projetos. Atualmente, há oito cases no catálogo. Os seis destaques permanecem na órbita, e Você Tem Valor e Planeta Energia aparecem na listagem abaixo. Novos projetos cadastrados fora da lista featured aparecem automaticamente até o limite de cinco. A listagem fica oculta somente quando não há projetos fora da órbita.
+
+O botão de contato atual disponibiliza uma mensagem para copiar; ele não envia mensagens automaticamente. O efeito de movimento respeita a configuração do sistema para movimento reduzido.

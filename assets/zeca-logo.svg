@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" fill="none">
+  <!-- Foliage / Leaves -->
+  <g transform="translate(410, 20)">
+    <!-- Right Leaf -->
+    <path d="M40 90 C 40 40, 95 10, 135 15 C 130 65, 95 110, 45 105 Z" fill="#84b819"/>
+    <!-- Left Leaf -->
+    <path d="M20 95 C 10 60, 40 30, 75 35 C 70 70, 50 100, 20 95 Z" fill="#8cc63f"/>
+    <!-- Vein accent -->
+    <path d="M45 100 C 70 70, 95 50, 125 35" stroke="#2c1028" stroke-width="3" stroke-linecap="round" opacity="0.18"/>
+  </g>
+  <!-- ZECA Wordmark -->
+  <text x="50" y="145" font-family="'Manrope', 'Arial Black', sans-serif" font-weight="900" font-size="118" letter-spacing="-4" fill="#ffffff">ZECA</text>
+  <!-- AÇAI Subtitle -->
+  <text x="280" y="205" font-family="'Manrope', 'Arial Black', sans-serif" font-weight="900" font-size="52" letter-spacing="3" fill="#8cc63f">AÇAÍ</text>
+</svg>
