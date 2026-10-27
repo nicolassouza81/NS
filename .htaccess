@@ -1,0 +1,146 @@
+# ==============================================================================
+# CONFIGURAÇÃO APACHE / LITESPEED - HOSTINGER
+# Portfólio Nícolas Souza — URLs Amigáveis, Cache, Compressão e Segurança
+# ==============================================================================
+
+# 1. Configurações gerais
+DirectoryIndex index.html
+Options -Indexes +FollowSymLinks
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # ----------------------------------------------------------------------------
+  # FORÇAR HTTPS (Recomendado na Hostinger)
+  # ----------------------------------------------------------------------------
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # ----------------------------------------------------------------------------
+  # URLs AMIGÁVEIS: Remove 'index.html' da barra de endereço
+  # Exemplo: /cases/adizero-racing/index.html -> /cases/adizero-racing/
+  # Exemplo: /projetos/index.html             -> /projetos/
+  # Exemplo: /index.html                      -> /
+  # ----------------------------------------------------------------------------
+  RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(.*)index\.html(?:\?|\ |\$) [NC]
+  RewriteRule ^(.*)index\.html$ $1 [R=301,L]
+
+  # ----------------------------------------------------------------------------
+  # URLs AMIGÁVEIS: Garante barra final em diretórios existentes
+  # Exemplo: /projetos              -> /projetos/
+  # Exemplo: /cases/adizero-racing -> /cases/adizero-racing/
+  # ----------------------------------------------------------------------------
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_URI} !(.*)/$
+  RewriteRule ^(.*)$ $1/ [L,R=301]
+
+  # ----------------------------------------------------------------------------
+  # URLs AMIGÁVEIS: Permite acessar arquivos .html sem digitar a extensão
+  # Exemplo: /contato -> /contato.html
+  # ----------------------------------------------------------------------------
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME}\.html -f
+  RewriteRule ^(.*)$ $1.html [L]
+
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# PÁGINA DE ERRO 404 CUSTOMIZADA
+# ------------------------------------------------------------------------------
+ErrorDocument 404 /404.html
+
+# ------------------------------------------------------------------------------
+# COMPRESSÃO GZIP / DEFLATE (Acelera carregamento na Hostinger)
+# ------------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/atom_xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE font/ttf
+  AddOutputFilterByType DEFLATE font/otf
+  AddOutputFilterByType DEFLATE font/woff
+  AddOutputFilterByType DEFLATE font/woff2
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# CACHE DE NAVEGADOR (Browser Caching / Core Web Vitals)
+# ------------------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+
+  # HTML: não cachear para que atualizações de conteúdo apareçam imediatamente
+  ExpiresByType text/html "access plus 0 seconds"
+
+  # CSS e JavaScript: 1 ano (com versionamento ou revalidação)
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+
+  # Imagens e Mídias
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+
+  # Fontes Web
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/ttf "access plus 1 year"
+  ExpiresByType font/otf "access plus 1 year"
+</IfModule>
+
+# Cache-Control Headers adicionais
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|webp|png|jpg|jpeg|gif|svg|woff2|woff|ttf|otf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# CABEÇALHOS DE SEGURANÇA (Security Headers)
+# ------------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# PROTEÇÃO DE ARQUIVOS E DIRETÓRIOS SENSÍVEIS
+# ------------------------------------------------------------------------------
+# Bloqueia acesso a arquivos ocultos (.git, .env, .htaccess, etc.)
+<FilesMatch "^\.">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+# Bloqueia arquivos de documentação e scripts do servidor
+<FilesMatch "(novo-projeto\.js|LEIA-ME\.txt|README\.md|composer\.|package\.)">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+# Bloqueia pasta _backups
+<IfModule mod_rewrite.c>
+  RewriteRule ^_backups/ - [F,L]
+</IfModule>

@@ -3,7 +3,7 @@
   if (!catalogue) return;
   const number = value => String(value).padStart(2, '0');
   const asset = file => new URL(`assets/${file}`, document.querySelector('script[data-portfolio-base]').src).href;
-  const caseUrl = id => new URL(`cases/${id}/index.html`, document.querySelector('script[data-portfolio-base]').src).href;
+  const caseUrl = id => new URL(`cases/${id}/`, document.querySelector('script[data-portfolio-base]').src).href;
   const image = p => `<img src="${asset(p.image)}" alt="${p.imageAlt}" width="${p.width}" height="${p.height}" loading="lazy">`;
 
   const hero = document.getElementById('hero-fan');
@@ -30,6 +30,26 @@
     document.querySelectorAll('[data-home-total]').forEach(el => el.textContent = number(selection.length));
     document.querySelectorAll('[data-home-plural]').forEach(el => el.textContent = selection.length === 1 ? '' : 'S');
     document.querySelector('.work-index-section').hidden = selection.length === 0;
+  }
+
+  const nextCase = document.querySelector('.next-case');
+  if (nextCase && Array.isArray(catalogue.projects) && catalogue.projects.length > 0) {
+    const currentId = document.body.dataset.caseId ||
+      catalogue.projects.find(p => document.body.classList.contains(p.id) || location.pathname.includes(`/cases/${p.id}/`) || location.pathname.endsWith(`/cases/${p.id}`))?.id;
+    if (currentId) {
+      const idx = catalogue.projects.findIndex(p => p.id === currentId);
+      if (idx !== -1) {
+        const nextProject = catalogue.projects[(idx + 1) % catalogue.projects.length];
+        const nextLink = nextCase.querySelector('a:not(.back-collection)');
+        if (nextLink && nextProject) {
+          nextLink.href = caseUrl(nextProject.id);
+          const title = nextLink.querySelector('h2');
+          const desc = nextLink.querySelector('p');
+          if (title) title.textContent = nextProject.name;
+          if (desc) desc.textContent = nextProject.description;
+        }
+      }
+    }
   }
 
   const collection = document.querySelector('[data-project-collection]');

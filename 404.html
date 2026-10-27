@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Página não encontrada — Portfólio de Nícolas Souza.">
+  <meta name="theme-color" content="#eeede8">
+  <title>404 — Página não encontrada — Nícolas Souza</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./portfolio.css">
+  <style>
+    .error-page-wrap {
+      min-height: calc(100vh - 180px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(3rem, 8vw, 8rem) clamp(1.5rem, 5vw, 4rem);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .error-kicker {
+      font-size: clamp(0.75rem, 1.2vw, 0.875rem);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted, #76746e);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .error-kicker span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--accent, #e43832);
+      border-radius: 50%;
+    }
+    .error-title {
+      font-size: clamp(2.5rem, 7vw, 6rem);
+      line-height: 0.95;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+    .error-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent, #e43832);
+    }
+    .error-desc {
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      max-width: 580px;
+      line-height: 1.6;
+      color: var(--body-color, #333);
+      margin-bottom: 3rem;
+    }
+    .error-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      align-items: center;
+    }
+    .error-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: var(--text, #111);
+      color: var(--bg, #eeede8);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    .error-btn-primary:hover {
+      background: var(--accent, #e43832);
+      transform: translateY(-2px);
+    }
+    .error-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border: 1px solid currentColor;
+      color: var(--text, #111);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    .error-btn-secondary:hover {
+      background: rgba(0,0,0,0.05);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="error-page" id="top">
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header>
+    <a class="brand" href="./" aria-label="Nícolas Souza início">ns<span>®</span></a>
+    <nav aria-label="Principal">
+      <a href="./projetos/">Trabalhos <sup data-project-total>08</sup></a>
+      <a href="./#sobre">Sobre</a>
+      <a href="./#contato">Vamos conversar <span>↗</span></a>
+    </nav>
+  </header>
+
+  <main id="conteudo">
+    <div class="error-page-wrap">
+      <div class="error-kicker"><span></span> 404 / FORA DE ÓRBITA</div>
+      <h1 class="error-title">ESTA PÁGINA<br>NÃO ESTÁ <em>AQUI.</em></h1>
+      <p class="error-desc">
+        O link que você seguiu pode estar quebrado, ter mudado de endereço ou nunca ter existido.
+        Que tal conferir os projetos do catálogo ou voltar à página inicial?
+      </p>
+      <div class="error-actions">
+        <a href="./projetos/" class="error-btn-primary">Ver todos os projetos ↗</a>
+        <a href="./" class="error-btn-secondary">Voltar ao início ↑</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <a class="brand" href="./">ns<span>®</span></a>
+    <span>DESIGN COM INTENÇÃO. FEITO EM BRASÍLIA.</span>
+    <a href="#top">VOLTAR AO TOPO ↑</a>
+  </footer>
+
+  <script src="./projects.js" data-portfolio-base></script>
+  <script src="./portfolio.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

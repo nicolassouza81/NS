@@ -1,5 +1,6 @@
 # Local snapshots created while editing the portfolio
 .backup-*/
+_backups/
 
 # Local configuration and temporary files
 .env

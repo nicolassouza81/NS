@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- Substitua a descrição abaixo pelo resumo do novo projeto -->
+  <meta name="description" content="{{NOME_DO_PROJETO}}: {{RESUMO_DO_PROJETO}}. Explore o conceito, a interface e as decisões de design no portfólio de Nícolas Souza.">
+  <meta name="theme-color" content="#eeede8">
+  <title>{{NOME_DO_PROJETO}} — Nícolas Souza</title>
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../../portfolio.css">
+</head>
+<!--
+  IMPORTANTE: 
+  1. No atributo data-case-id coloque o mesmo id (slug) cadastrado em projects.js.
+  2. Adicione também esse id na class do body (ex: "detail-page meu-case").
+-->
+<body class="detail-page {{ID}}" data-case-id="{{ID}}" id="top">
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div class="progress" aria-hidden="true"></div>
+
+  <!-- Cabeçalho institucional compartilhado -->
+  <header>
+    <a class="brand" href="../../" aria-label="Nícolas Souza início">ns<span>®</span></a>
+    <nav aria-label="Principal">
+      <a href="../../projetos/">Trabalhos <sup data-project-total>08</sup></a>
+      <a href="../../#sobre">Sobre</a>
+      <a href="../../#contato">Vamos conversar <span>↗</span></a>
+    </nav>
+  </header>
+
+  <main id="conteudo">
+    <article class="case" id="case-{{ID}}">
+
+      <!-- ===================================================================
+           00 / INTRODUÇÃO E METADADOS DO CASE
+           =================================================================== -->
+      <section class="case-head">
+        <div class="section-label">
+          <span>CASE / {{NOME_DO_PROJETO}}</span>
+          <a href="../../projetos/">TODOS OS PROJETOS ↖</a>
+        </div>
+        <p class="case-kicker">{{CATEGORIA_OU_DISCIPLINA}}</p>
+        <h1>{{TITULO_PRINCIPAL_LINHA_1}}<br><em>{{TITULO_PRINCIPAL_DESTAQUE}}.</em></h1>
+        <p class="case-lead">{{PARAGRAFO_DE_INTRODUCAO_E_OBJETIVO}}</p>
+
+        <div class="case-meta">
+          <div>
+            <small>NATUREZA</small>
+            <span>{{NATUREZA_DO_PROJETO}}</span> <!-- Ex: Comercial · Autoral · Redesign -->
+          </div>
+          <div>
+            <small>AUTORIA / PAPEL</small>
+            <span>Nícolas Souza · {{SEU_PAPEL}}</span> <!-- Ex: UX/UI Designer · Direção de Arte -->
+          </div>
+          <div>
+            <small>FOCO</small>
+            <span>{{FOCO_DO_PROJETO}}</span> <!-- Ex: Interfaces digitais & Design System -->
+          </div>
+          <!-- Link opcional para arquivo Figma (remova caso não se aplique) -->
+          <a href="{{LINK_FIGMA}}" target="_blank" rel="noopener noreferrer">Explorar no Figma ↗</a>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           IMAGEM DE ABERTURA / HERO
+           =================================================================== -->
+      <figure class="wide-image">
+        <img src="../../assets/{{IMAGEM_HERO}}" alt="{{DESCRICAO_IMAGEM_HERO}}" width="1600" height="900" fetchpriority="high">
+        <figcaption>01 / {{LEGENDA_IMAGEM_HERO}}</figcaption>
+      </figure>
+
+      <!-- ===================================================================
+           01 / O CONCEITO E A HISTÓRIA
+           =================================================================== -->
+      <div class="case-text reveal">
+        <span class="number">01 — CONCEITO</span>
+        <div>
+          <h2>{{TITULO_DO_CONCEITO_1}}<br>{{TITULO_DO_CONCEITO_2}}</h2>
+          <p>{{TEXTO_DO_CONCEITO_PARAGRAFO_1}}</p>
+          <p>{{TEXTO_DO_CONCEITO_PARAGRAFO_2}}</p>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           02 / SISTEMA VISUAL E PALETA DE CORES (OPCIONAL)
+           =================================================================== -->
+      <div class="visual-system reveal">
+        <div>
+          <span class="number">02 — DIREÇÃO VISUAL</span>
+          <h2>{{TITULO_DIRECAO_VISUAL}}</h2>
+          <p>{{DESCRICAO_DIRECAO_VISUAL}}</p>
+        </div>
+        <div class="swatches">
+          <!-- Edite os valores hexadecimais em --swatch e o rótulo de cada cor -->
+          <div style="--swatch:#090909"><span>PROFUNDIDADE</span></div>
+          <div style="--swatch:#e43832"><span>DESTAQUE</span></div>
+          <div style="--swatch:#b5dc22"><span>ENERGIA</span></div>
+          <div style="--swatch:#f0efe9"><span>CONTRASTE</span></div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           IMAGEM DE DETALHE OU PRANCHA INTERMEDIÁRIA
+           =================================================================== -->
+      <figure class="wide-image detail reveal">
+        <img src="../../assets/{{IMAGEM_DETALHE}}" alt="{{DESCRICAO_IMAGEM_DETALHE}}" width="1600" height="900" loading="lazy">
+        <figcaption>02 / {{LEGENDA_IMAGEM_DETALHE}}</figcaption>
+      </figure>
+
+      <!-- ===================================================================
+           03 / EXPERIÊNCIA E DECISÕES DE INTERFACE
+           =================================================================== -->
+      <div class="case-text reveal">
+        <span class="number">03 — EXPERIÊNCIA</span>
+        <div>
+          <h2>{{TITULO_EXPERIENCIA_1}}<br>{{TITULO_EXPERIENCIA_2}}</h2>
+          <p>{{TEXTO_EXPERIENCIA_PARAGRAFO_1}}</p>
+          <p>{{TEXTO_EXPERIENCIA_PARAGRAFO_2}}</p>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           04 / APRESENTAÇÃO COMPLETA OU MOCKUP INTERATIVO (OPCIONAL)
+           =================================================================== -->
+      <section class="full-project reveal">
+        <div class="section-label">
+          <span>04 / INTERFACE COMPLETA</span>
+          <button id="expand" type="button" aria-expanded="false">EXPANDIR PROJETO +</button>
+        </div>
+        <div class="browser-frame">
+          <div class="browser-bar">
+            <span>● ● ●</span>
+            <span>{{NOME_DO_PROJETO}} — INTERFACE</span>
+            <span>↗</span>
+          </div>
+          <div class="project-window" id="project-window">
+            <img src="../../assets/{{IMAGEM_PROJETO_COMPLETO}}" alt="Visão geral completa do projeto {{NOME_DO_PROJETO}}" width="459" height="2400" loading="lazy">
+          </div>
+        </div>
+        <p class="disclaimer">Projeto autoral e independente. Todas as marcas e nomes citados pertencem aos seus respectivos titulares.</p>
+      </section>
+
+    </article>
+
+    <!-- =====================================================================
+         PRÓXIMO CASE (Gerenciado automaticamente pelo portfolio.js)
+         O portfolio.js detecta o data-case-id desta página e busca no projects.js
+         o próximo projeto da sequência, preenchendo o link, título e resumo.
+         ===================================================================== -->
+    <aside class="next-case">
+      <span>CONTINUE EXPLORANDO / PRÓXIMO CASE</span>
+      <a href="../../projetos/">
+        <div>
+          <h2>Próximo projeto</h2>
+          <p>Explore a próxima experiência do catálogo.</p>
+        </div>
+        <b aria-hidden="true">↗</b>
+      </a>
+      <a class="back-collection" href="../../projetos/">← Todos os projetos</a>
+    </aside>
+  </main>
+
+  <footer>
+    <a class="brand" href="#top">ns<span>®</span></a>
+    <span>DESIGN COM INTENÇÃO. FEITO EM BRASÍLIA.</span>
+    <a href="#top">VOLTAR AO TOPO ↑</a>
+  </footer>
+
+  <script src="../../projects.js" data-portfolio-base></script>
+  <script src="../../portfolio.js"></script>
+  <script src="../../app.js"></script>
+</body>
+</html>

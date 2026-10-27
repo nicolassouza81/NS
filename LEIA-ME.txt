@@ -1,18 +1,51 @@
 PORTFÓLIO — NÍCOLAS SOUZA
 
-Este pacote contém os arquivos HTML, CSS, JavaScript, imagens, a página completa de projetos e as páginas dos cases.
+Este pacote contém os arquivos HTML, CSS, JavaScript, imagens, catálogo de projetos e as páginas dos cases.
+O projeto está 100% preparado para publicação na Hostinger, com URLs amigáveis, segurança, compressão GZIP e fluxo facilitado para inclusão de novos cases.
 
 COMO TESTAR NO COMPUTADOR
-1. Extraia o ZIP para uma pasta.
-2. Execute um servidor local a partir da pasta extraída. Se tiver Python instalado, abra o terminal nessa pasta e execute:
-   python -m http.server 8000
-3. Acesse http://localhost:8000 no navegador.
+1. Execute um servidor local a partir desta pasta:
+   - Python: python -m http.server 8000 (acesse http://localhost:8000)
+   - Node:   npx serve .
+   - XAMPP:  Mantenha em c:\xampp\htdocs\ns (acesse http://localhost/ns/)
 
-HOSPEDAGEM
-Envie index.html, style.css, portfolio.css, app.js, projects.js, portfolio.js e as pastas assets, cases e projetos para a pasta pública do domínio, por exemplo public_html na Hostinger. Os caminhos relativos também permitem hospedar em subpastas, como localhost/ns/. Não publique as pastas iniciadas por .backup-, que contêm cópias de segurança anteriores aos ajustes.
+HOSPEDAGEM NA HOSTINGER
+Envie os seguintes arquivos e pastas para a pasta pública do seu domínio (geralmente public_html):
+- .htaccess (importante: certifique-se de enviar este arquivo para URLs amigáveis, cache e HTTPS)
+- 404.html
+- index.html
+- style.css
+- portfolio.css
+- app.js
+- portfolio.js
+- projects.js
+- Pasta assets/
+- Pasta cases/
+- Pasta projetos/
 
-PROJETOS
-A página projetos/index.html reúne o catálogo completo, com filtros e busca. O catálogo compartilhado fica em projects.js. Para acrescentar um projeto, crie sua página em cases/<identificador>/index.html, adicione a imagem a assets e cadastre os dados em projects.js. As categorias disponíveis são ux, branding e art.
-Os projetos do hero são definidos pela lista featured em projects.js; a ordem nessa lista determina a ordem da órbita. O HTML da home também mantém uma seleção estática como alternativa sem JavaScript. A listagem abaixo exclui esses identificadores e exibe no máximo cinco projetos. Atualmente, há oito cases no catálogo. Os seis destaques permanecem na órbita, e Você Tem Valor e Planeta Energia aparecem na listagem abaixo. Novos projetos cadastrados fora da lista featured aparecem automaticamente até o limite de cinco. A listagem fica oculta somente quando não há projetos fora da órbita.
+NÃO envie a pasta _backups/ (contém cópias locais antigas de segurança).
 
-O botão de contato atual disponibiliza uma mensagem para copiar; ele não envia mensagens automaticamente. O efeito de movimento respeita a configuração do sistema para movimento reduzido.
+RECURSOS ATIVOS NA HOSTINGER VIA .HTACCESS:
+- URLs amigáveis limpas: /projetos/ e /cases/nome-do-case/ sem index.html visível.
+- Redirecionamento forçado para HTTPS seguro.
+- Compressão GZIP / Deflate para alto desempenho.
+- Cache de 1 ano para imagens e estilos.
+- Página de erro 404 customizada integrada à identidade visual.
+
+COMO ADICIONAR UM NOVO PROJETO FACILMENTE:
+Método 1 (Automático via terminal):
+Execute o gerador:
+  node novo-projeto.js
+Ou com argumentos:
+  node novo-projeto.js meu-case "Nome do Case" ux "Resumo do case"
+
+Método 2 (Manual):
+1. Duplique a pasta cases/_template/ para cases/<identificador>/
+2. Adicione as imagens correspondentes na pasta assets/
+3. Abra projects.js e cadastre o novo objeto na lista projects.
+   - Categorias disponíveis: ux, branding, art.
+   - Para destacar na órbita da home, inclua o identificador no array featured.
+
+AUTOMAÇÕES IMPLEMENTADAS:
+- O encadeamento de "Próximo Case" no rodapé de cada projeto é gerido automaticamente pelo portfolio.js com base na ordem de projects.js.
+- Os contadores de projetos (08, 09, etc.) e os números dos filtros atualizam automaticamente sem precisar alterar o HTML.
