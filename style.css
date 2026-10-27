@@ -97,15 +97,21 @@
 .index-tags span{transition:background .3s,border-color .3s,color .3s}
 .index-row:hover .index-tags span{border-color:#1c211c}
 
-/* Contextual cursor (desktop only, injected by app.js) */
+/* Contextual cursor & glitch trail (desktop only, injected by app.js) */
+.cursor-glitch-canvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:298}
 .cursor-ring{position:fixed;left:0;top:0;width:0;height:0;pointer-events:none;z-index:300;opacity:0;transition:opacity .3s;color:#1c211c}
 .cursor-ring.on{opacity:1}
-.cursor-ring::before{content:'';position:absolute;left:-17px;top:-17px;width:34px;height:34px;border:1px solid currentColor;border-radius:50%;transition:scale .45s var(--ease-out),background .35s,border-color .35s}
+.cursor-ring::before{content:'';position:absolute;left:-17px;top:-17px;width:34px;height:34px;border:1px solid currentColor;border-radius:50%;transition:scale .45s var(--ease-out),background .35s,border-color .35s,box-shadow .2s}
+.cursor-ring::after{content:'';position:absolute;left:-17px;top:-17px;width:34px;height:34px;border:1px solid #00c7d1;border-radius:50%;pointer-events:none;opacity:0;transition:opacity .2s,scale .45s var(--ease-out);transform:translate(var(--ring-glitch-c-x,-2px),var(--ring-glitch-c-y,0))}
+.cursor-ring.is-glitching::before{box-shadow:var(--ring-glitch-r-x,2px) var(--ring-glitch-r-y,0) 0 rgba(232,75,60,.7)}
+.cursor-ring.is-glitching::after{opacity:.85}
 .cursor-ring span{position:absolute;left:0;top:0;translate:-50% -50%;font:700 9px/1 'DM Sans',Arial,sans-serif;letter-spacing:1px;color:#fff;white-space:nowrap;opacity:0;scale:.6;transition:opacity .3s,scale .45s var(--ease-out)}
-.cursor-ring.is-link::before{scale:.55;background:rgba(28,33,28,.12)}
-.cursor-ring.is-view::before{scale:2.5;background:var(--red);border-color:var(--red)}
+.cursor-ring.is-link::before,.cursor-ring.is-link::after{scale:.55}
+.cursor-ring.is-link::before{background:rgba(28,33,28,.12)}
+.cursor-ring.is-view::before,.cursor-ring.is-view::after{scale:2.5}
+.cursor-ring.is-view::before{background:var(--red);border-color:var(--red)}
 .cursor-ring.is-view span{opacity:1;scale:1}
-.cursor-ring.is-down::before{scale:.8}
+.cursor-ring.is-down::before,.cursor-ring.is-down::after{scale:.8}
 
 /* Magnetic buttons */
 .magnetic{transition:translate .45s var(--ease-out),background .3s,color .3s,border-color .3s}

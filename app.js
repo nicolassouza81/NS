@@ -92,13 +92,169 @@ if(!fine||reduce)return;
 // Magnetic call-to-actions.
 document.querySelectorAll('.connections-link,.about-primary,.about-contact,.contact-button,.hero-scroll-btn,.hero-dock-btn,.home-page nav a:last-child').forEach(el=>{el.classList.add('magnetic');el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();el.style.translate=`${(e.clientX-r.left-r.width/2)*.22}px ${(e.clientY-r.top-r.height/2)*.35}px`});el.addEventListener('pointerleave',()=>{el.style.translate=''})});
 
-// Contextual cursor ring: shrinks over links, expands into "VER" over projects.
+// Contextual cursor ring & chromatic glitch trail (desktop fine pointer).
 const ring=document.createElement('div');ring.className='cursor-ring';ring.setAttribute('aria-hidden','true');ring.innerHTML='<span>VER ↗</span>';document.body.append(ring);
-let tx=innerWidth/2,ty=innerHeight/2,cx=tx,cy=ty,running=false;
-const loop=()=>{cx+=(tx-cx)*.2;cy+=(ty-cy)*.2;ring.style.transform=`translate3d(${cx}px,${cy}px,0)`;if(Math.abs(tx-cx)+Math.abs(ty-cy)>.2)requestAnimationFrame(loop);else running=false};
-addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;ring.classList.add('on');if(!running){running=true;requestAnimationFrame(loop)}},{passive:true});
-document.documentElement.addEventListener('pointerleave',()=>ring.classList.remove('on'));
-addEventListener('pointerdown',()=>ring.classList.add('is-down'));addEventListener('pointerup',()=>ring.classList.remove('is-down'));
+
+const canvas=document.createElement('canvas');canvas.className='cursor-glitch-canvas';canvas.setAttribute('aria-hidden','true');document.body.append(canvas);
+const ctx=canvas.getContext('2d');
+let dpr=window.devicePixelRatio||1;
+const resizeCanvas=()=>{dpr=window.devicePixelRatio||1;canvas.width=innerWidth*dpr;canvas.height=innerHeight*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)};
+resizeCanvas();addEventListener('resize',resizeCanvas,{passive:true});
+
+let tx=innerWidth/2,ty=innerHeight/2,cx=tx,cy=ty,lastX=tx,lastY=ty,running=false;
+const trailPoints=[];
+const glitchSlices=[];
+const C_CYAN='rgba(0,199,209,', C_RED='rgba(232,75,60,', C_INK='rgba(28,33,28,', C_LIME='rgba(219,255,115,';
+
+const spawnGlitch=(x,y,vx,vy,spd)=>{
+  const intensity=Math.min(spd,45);
+  const count=spd>16?2:1;
+  for(let i=0;i<count;i++){
+    const isCyan=Math.random()<0.52;
+    glitchSlices.push({
+      x:x+(Math.random()-.5)*(12+intensity*.4),
+      y:y+(Math.random()-.5)*(8+intensity*.3),
+      w:8+Math.random()*(14+intensity*.7),
+      h:1.5+Math.random()*2,
+      color:isCyan?C_CYAN:C_RED,
+      shiftX:(isCyan?-1:1)*(2+Math.random()*4),
+      life:1,
+      decay:0.07+Math.random()*0.06
+    });
+  }
+  if(Math.random()<0.3){
+    glitchSlices.push({
+      x:x+(Math.random()-.5)*18,
+      y:y+(Math.random()-.5)*18,
+      w:3+Math.random()*3,
+      h:3+Math.random()*3,
+      color:Math.random()<0.3?C_LIME:(Math.random()<0.5?C_CYAN:C_RED),
+      shiftX:(Math.random()-.5)*5,
+      life:1,
+      decay:0.09+Math.random()*0.05
+    });
+  }
+};
+
+const spawnClickBurst=(x,y)=>{
+  for(let i=0;i<10;i++){
+    const angle=(Math.PI*2*i)/10+(Math.random()-.5)*.3;
+    const dist=6+Math.random()*22;
+    const isCyan=i%2===0;
+    glitchSlices.push({
+      x:x+Math.cos(angle)*dist,
+      y:y+Math.sin(angle)*dist,
+      w:5+Math.random()*15,
+      h:1.8+Math.random()*2,
+      color:isCyan?C_CYAN:C_RED,
+      shiftX:(isCyan?-3:3),
+      life:1,
+      decay:0.06+Math.random()*0.04
+    });
+  }
+};
+
+const loop=()=>{
+  cx+=(tx-cx)*.22;cy+=(ty-cy)*.22;
+  ring.style.transform=`translate3d(${cx}px,${cy}px,0)`;
+
+  const dx=tx-cx,dy=ty-cy,curSpeed=Math.hypot(dx,dy);
+  if(curSpeed>2.5){
+    const gx=Math.min(7,Math.max(-7,dx*.22)).toFixed(1);
+    const gy=Math.min(4,Math.max(-4,dy*.15)).toFixed(1);
+    ring.style.setProperty('--ring-glitch-c-x',`${-gx}px`);
+    ring.style.setProperty('--ring-glitch-c-y',`${-gy}px`);
+    ring.style.setProperty('--ring-glitch-r-x',`${gx}px`);
+    ring.style.setProperty('--ring-glitch-r-y',`${gy}px`);
+    ring.classList.add('is-glitching');
+  }else{
+    ring.classList.remove('is-glitching');
+  }
+
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+
+  for(let i=trailPoints.length-1;i>=0;i--){
+    const p=trailPoints[i];p.age++;
+    if(p.age>=p.maxAge)trailPoints.splice(i,1);
+  }
+
+  if(trailPoints.length>2){
+    // Cyan chromatic trail
+    ctx.beginPath();
+    for(let i=0;i<trailPoints.length;i++){
+      const p=trailPoints[i];
+      const ox=p.x-(p.vx*.16)-2,oy=p.y-1;
+      if(i===0)ctx.moveTo(ox,oy);else ctx.lineTo(ox,oy);
+    }
+    ctx.strokeStyle=C_CYAN+'0.45)';ctx.lineWidth=1.8;ctx.stroke();
+
+    // Red chromatic trail
+    ctx.beginPath();
+    for(let i=0;i<trailPoints.length;i++){
+      const p=trailPoints[i];
+      const ox=p.x+(p.vx*.16)+2,oy=p.y+1;
+      if(i===0)ctx.moveTo(ox,oy);else ctx.lineTo(ox,oy);
+    }
+    ctx.strokeStyle=C_RED+'0.45)';ctx.lineWidth=1.8;ctx.stroke();
+
+    // Central ink trail
+    ctx.beginPath();
+    for(let i=0;i<trailPoints.length;i++){
+      const p=trailPoints[i];
+      if(i===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);
+    }
+    ctx.strokeStyle=C_INK+'0.25)';ctx.lineWidth=1.2;ctx.stroke();
+
+    // Echo micro dots
+    for(let i=0;i<trailPoints.length;i+=2){
+      const p=trailPoints[i];
+      const prog=1-(p.age/p.maxAge);
+      ctx.fillStyle=C_INK+(0.35*prog).toFixed(2)+')';
+      ctx.beginPath();ctx.arc(p.x,p.y,Math.max(.5,2.2*prog),0,Math.PI*2);ctx.fill();
+    }
+  }
+
+  // Draw glitch tearing slices
+  for(let i=glitchSlices.length-1;i>=0;i--){
+    const s=glitchSlices[i];
+    s.life-=s.decay;
+    if(s.life<=0){glitchSlices.splice(i,1);continue}
+    ctx.fillStyle=s.color+(s.life*.85).toFixed(2)+')';
+    ctx.fillRect(s.x+s.shiftX*(1-s.life*.5),s.y,s.w,s.h);
+  }
+
+  const ringDist=Math.abs(tx-cx)+Math.abs(ty-cy);
+  if(ringDist>.15||trailPoints.length>0||glitchSlices.length>0){
+    requestAnimationFrame(loop);
+  }else{
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+    running=false;
+  }
+};
+
+addEventListener('pointermove',e=>{
+  const dx=e.clientX-lastX,dy=e.clientY-lastY,dist=Math.hypot(dx,dy);
+  tx=e.clientX;ty=e.clientY;
+  ring.classList.add('on');
+  if(dist>1.5){
+    trailPoints.push({x:e.clientX,y:e.clientY,vx:dx,vy:dy,age:0,maxAge:Math.min(26,14+Math.round(dist*.35))});
+    if(trailPoints.length>22)trailPoints.shift();
+    if(dist>5)spawnGlitch(e.clientX,e.clientY,dx,dy,dist);
+  }
+  lastX=e.clientX;lastY=e.clientY;
+  if(!running){running=true;requestAnimationFrame(loop)}
+},{passive:true});
+
+document.documentElement.addEventListener('pointerleave',()=>{
+  ring.classList.remove('on');
+  trailPoints.length=0;glitchSlices.length=0;
+});
+addEventListener('pointerdown',e=>{
+  ring.classList.add('is-down');
+  spawnClickBurst(e.clientX,e.clientY);
+  if(!running){running=true;requestAnimationFrame(loop)}
+});
+addEventListener('pointerup',()=>ring.classList.remove('is-down'));
 const viewSel='.index-row,.connection-tile,.hero-project';
 document.addEventListener('pointerover',e=>{const t=e.target.closest?.(`${viewSel},a,button,textarea`);ring.classList.toggle('is-view',!!t&&t.matches(viewSel));ring.classList.toggle('is-link',!!t&&!t.matches(viewSel))});
 
