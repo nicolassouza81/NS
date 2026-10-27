@@ -31,7 +31,7 @@ nav a[aria-current="page"]{text-decoration:underline;text-decoration-color:var(-
 .js .hero-stage:not(.is-bloomed) .hero-project{--expand:0;box-shadow:0 12px 30px rgba(0,0,0,.35)}
 .js .hero-stage.is-bloomed .hero-project{--expand:1}
 .js .hero-stage.bloom-complete .hero-project{transition:transform .65s cubic-bezier(.2,.8,.2,1),box-shadow .3s,outline-color .3s;transition-delay:0s!important}
-.home-page .hero-project:hover,.home-page .hero-project:focus-visible{transform:translate(-50%,-50%) translate(calc(var(--orbit-x)*var(--orbit-radius)),calc(var(--orbit-y)*var(--orbit-radius))) rotate(0deg) scale(1.05)!important;z-index:10}
+.home-page .hero-project:hover,.home-page .hero-project:focus-visible{transform:translate(-50%,-50%) translate(calc(var(--orbit-x)*var(--orbit-radius)),calc(var(--orbit-y)*var(--orbit-radius))) rotate(0deg) scale(1.18)!important;box-shadow:0 24px 48px rgba(0,0,0,.42);z-index:15}
 .home-page .hero-project.is-selected{outline-color:var(--red);box-shadow:0 20px 40px #303a2930;z-index:4}
 .home-page .hero-arc,.home-page .hero-orbit-center{top:calc(50% - 30px)}
 .home-page .hero-project strong{font-size:21px}
