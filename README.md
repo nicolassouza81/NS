@@ -132,6 +132,8 @@ O script irá:
    ```
 4. **Destaque na Órbita (Opcional)**:
    Se desejar que o projeto apareça na órbita do início, adicione o `id` à lista `featured` no início de `projects.js`. Caso contrário, ele aparecerá automaticamente na seção inferior da home (até o limite de 5) e na página `/projetos/`.
+5. **Curadoria da Home (Opcional)**:
+   Use `homeOrder` em `projects.js` para priorizar os projetos da listagem abaixo da órbita. As vagas restantes seguem a ordem do catálogo, respeitando `homeLimit`. Projetos em `featured` sempre ficam fora dessa listagem; todos continuam disponíveis no catálogo completo.
 
 ### O que acontece automaticamente ao cadastrar um projeto?
 - ✅ **Contador global (`sup data-project-total`)**: Atualiza automaticamente em todas as páginas (Home, Catálogo e Cases).

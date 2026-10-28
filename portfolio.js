@@ -23,9 +23,11 @@
   document.querySelectorAll('[data-project-total]').forEach(el => el.textContent = number(catalogue.projects.length));
   const homeList = document.querySelector('[data-home-projects]');
   if (homeList) {
-    // Exclude every project actually present in the hero, then cap the home selection.
+    // Curate the home selection without repeating any project actually in the hero.
     const featured = new Set(Array.from(document.querySelectorAll('.hero-project[data-project-id]'), el => el.dataset.projectId));
-    const selection = catalogue.projects.filter(p => !featured.has(p.id)).slice(0, catalogue.homeLimit);
+    const homeOrder = new Map((catalogue.homeOrder || []).map((id, index) => [id, index]));
+    const priority = project => homeOrder.get(project.id) ?? catalogue.projects.length;
+    const selection = catalogue.projects.filter(p => !featured.has(p.id)).sort((a, b) => priority(a) - priority(b)).slice(0, catalogue.homeLimit);
     homeList.innerHTML = selection.map((p, i) => `<article class="work-item index-item"><a href="${caseUrl(p.id)}" class="index-row"><span class="index-number">${number(i + 1)}</span><span class="index-content"><strong>${p.title.join('<br>')}<span class="index-dot">.</span></strong><span class="index-mobile-category">${p.label}</span><span class="index-desc">${p.description}</span></span><span class="index-tags">${p.tags.map(tag => `<span>${tag}</span>`).join('')}</span><span class="index-thumb index-thumb-${p.visual}">${image(p)}</span><span class="index-arrow" aria-hidden="true">↗</span><span class="sr-only">Ver case ${p.name}</span></a></article>`).join('');
     document.querySelectorAll('[data-home-total]').forEach(el => el.textContent = number(selection.length));
     document.querySelectorAll('[data-home-plural]').forEach(el => el.textContent = selection.length === 1 ? '' : 'S');
