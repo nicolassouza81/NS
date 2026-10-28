@@ -233,6 +233,7 @@ const loop=()=>{
 };
 
 addEventListener('pointermove',e=>{
+  if(document.querySelector('dialog.case-lightbox[open]')){ring.classList.remove('on');return;}
   const dx=e.clientX-lastX,dy=e.clientY-lastY,dist=Math.hypot(dx,dy);
   tx=e.clientX;ty=e.clientY;
   ring.classList.add('on');
@@ -250,13 +251,23 @@ document.documentElement.addEventListener('pointerleave',()=>{
   trailPoints.length=0;glitchSlices.length=0;
 });
 addEventListener('pointerdown',e=>{
+  if(document.querySelector('dialog.case-lightbox[open]'))return;
   ring.classList.add('is-down');
   spawnClickBurst(e.clientX,e.clientY);
   if(!running){running=true;requestAnimationFrame(loop)}
 });
 addEventListener('pointerup',()=>ring.classList.remove('is-down'));
 const viewSel='.index-row,.connection-tile,.hero-project';
-document.addEventListener('pointerover',e=>{const t=e.target.closest?.(`${viewSel},a,button,textarea`);ring.classList.toggle('is-view',!!t&&t.matches(viewSel));ring.classList.toggle('is-link',!!t&&!t.matches(viewSel))});
+const zoomSel='.detail-page main article img,.detail-page main article a[href$=".jpg"],.detail-page main article a[href$=".jpeg"],.detail-page main article a[href$=".png"],.detail-page main article a[href$=".webp"],.detail-page main article a[href$=".avif"],.detail-page main article a[href$=".svg"]';
+const ringLabel=ring.querySelector('span');
+document.addEventListener('pointerover',e=>{
+  const t=e.target.closest?.(`${viewSel},${zoomSel},a,button,textarea`);
+  const isZoom=!!t&&t.matches(zoomSel);
+  const isView=!!t&&(t.matches(viewSel)||isZoom);
+  if(ringLabel)ringLabel.textContent=isZoom?'AMPLIAR':'VER ↗';
+  ring.classList.toggle('is-view',isView);
+  ring.classList.toggle('is-link',!!t&&!isView);
+});
 
 // Portrait tilt.
 const portrait=document.querySelector('.about-portrait'),motion=portrait?.querySelector('.portrait-motion');
@@ -332,4 +343,274 @@ if(!reduce){
   },{passive:true});
   updateTextScroll();
 }
+})();
+
+// ===== In-page animated image lightbox for case studies =====
+(()=>{
+  const caseArticle = document.querySelector('.detail-page main article');
+  if (!caseArticle) return;
+
+  const imgHrefPattern = /\.(jpe?g|png|webp|avif|svg)(\?.*)?$/i;
+
+  function extractItemMeta(img) {
+    const fig = img.closest('figure');
+    const cap = fig?.querySelector('figcaption');
+    const browserBar = img.closest('.fin-web-frame,.browser-frame')?.querySelector('.fin-browserbar,.browser-bar');
+    let kicker = '';
+    let description = '';
+
+    if (cap) {
+      const span = cap.querySelector('span:first-child');
+      const bold = cap.querySelector('b');
+      const p = cap.querySelector('p');
+      const secondSpan = cap.querySelectorAll('span')[1];
+      if (span) kicker = span.textContent.trim();
+      else if (bold) kicker = bold.textContent.trim();
+      if (p) description = p.textContent.trim();
+      else if (secondSpan && !cap.querySelector('a')) description = secondSpan.textContent.trim();
+      else if (!span && !bold) kicker = cap.textContent.trim();
+    }
+    if (!kicker && browserBar) {
+      const spans = browserBar.querySelectorAll('span');
+      if (spans[1]) kicker = spans[1].textContent.trim();
+    }
+    if (!description) description = img.getAttribute('alt') || '';
+    if (!kicker) kicker = document.title.replace(/\s*—.*$/, '').toUpperCase();
+
+    const w = Number(img.getAttribute('width')) || img.naturalWidth || 1000;
+    const h = Number(img.getAttribute('height')) || img.naturalHeight || 700;
+    return {
+      src: img.currentSrc || img.src,
+      alt: img.getAttribute('alt') || kicker,
+      kicker,
+      description,
+      isTall: h / w > 1.85
+    };
+  }
+
+  function getGalleryItems() {
+    const seen = new Set();
+    const items = [];
+    caseArticle.querySelectorAll('img').forEach(img => {
+      const src = new URL(img.getAttribute('src') || img.src, location.href).href;
+      if (!src || seen.has(src)) return;
+      seen.add(src);
+      items.push({ ...extractItemMeta(img), src });
+    });
+    return items;
+  }
+
+  // Enhance images and image links inside the case so they open in-page instead of a new tab.
+  caseArticle.querySelectorAll('img').forEach(img => {
+    const fig = img.closest('figure');
+    const link = fig?.querySelector('a[href]');
+    if (link && imgHrefPattern.test(link.getAttribute('href') || '')) {
+      link.removeAttribute('target');
+      link.dataset.lightboxTrigger = 'true';
+    } else if (!img.closest('a,button')) {
+      img.tabIndex = 0;
+      img.setAttribute('role', 'button');
+    }
+  });
+  caseArticle.querySelectorAll('a[href]').forEach(link => {
+    if (imgHrefPattern.test(link.getAttribute('href') || '')) {
+      link.removeAttribute('target');
+      link.dataset.lightboxTrigger = 'true';
+    }
+  });
+
+  const dialog = document.createElement('dialog');
+  dialog.className = 'case-lightbox';
+  dialog.setAttribute('aria-label', 'Visualização ampliada da imagem');
+  dialog.innerHTML = `
+    <div class="lightbox-topbar">
+      <div class="lightbox-meta">
+        <span class="lightbox-counter" data-lightbox-counter>01 / 01</span>
+        <span class="lightbox-kicker" data-lightbox-kicker></span>
+      </div>
+      <div class="lightbox-actions">
+        <button type="button" class="lightbox-btn" data-lightbox-zoom aria-pressed="false">Ampliar 100% ⊕</button>
+        <button type="button" class="lightbox-btn" data-lightbox-close aria-label="Fechar visualização">Fechar ✕</button>
+      </div>
+    </div>
+    <div class="lightbox-stage" data-lightbox-stage>
+      <button type="button" class="lightbox-nav lightbox-prev" data-lightbox-prev aria-label="Imagem anterior">‹</button>
+      <figure class="lightbox-figure" data-lightbox-figure>
+        <img class="lightbox-img" data-lightbox-img src="" alt="">
+      </figure>
+      <button type="button" class="lightbox-nav lightbox-next" data-lightbox-next aria-label="Próxima imagem">›</button>
+    </div>
+    <div class="lightbox-footer">
+      <p class="lightbox-caption" data-lightbox-caption></p>
+      <span class="lightbox-hint">SETAS ‹ › PARA NAVEGAR · CLIQUE NA IMAGEM PARA ZOOM · ESC PARA FECHAR</span>
+    </div>
+  `;
+  document.body.append(dialog);
+
+  const counterEl = dialog.querySelector('[data-lightbox-counter]');
+  const kickerEl = dialog.querySelector('[data-lightbox-kicker]');
+  const captionEl = dialog.querySelector('[data-lightbox-caption]');
+  const stageEl = dialog.querySelector('[data-lightbox-stage]');
+  const figureEl = dialog.querySelector('[data-lightbox-figure]');
+  const imgEl = dialog.querySelector('[data-lightbox-img]');
+  const zoomBtn = dialog.querySelector('[data-lightbox-zoom]');
+  const closeBtn = dialog.querySelector('[data-lightbox-close]');
+  const prevBtn = dialog.querySelector('[data-lightbox-prev]');
+  const nextBtn = dialog.querySelector('[data-lightbox-next]');
+
+  let items = [];
+  let currentIndex = 0;
+  let zoomed = false;
+  let lastFocused = null;
+  let closingTimer = null;
+
+  function setZoom(nextZoom) {
+    zoomed = Boolean(nextZoom);
+    stageEl.classList.toggle('is-zoomed', zoomed);
+    zoomBtn.setAttribute('aria-pressed', String(zoomed));
+    zoomBtn.textContent = zoomed ? 'Ajustar à tela ⊖' : 'Ampliar 100% ⊕';
+    if (!zoomed) stageEl.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }
+
+  function renderSlide(animate = false) {
+    const item = items[currentIndex];
+    if (!item) return;
+
+    const applyContent = () => {
+      imgEl.src = item.src;
+      imgEl.alt = item.alt;
+      counterEl.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`;
+      kickerEl.textContent = item.kicker;
+      captionEl.textContent = item.description;
+      prevBtn.hidden = items.length <= 1;
+      nextBtn.hidden = items.length <= 1;
+      setZoom(item.isTall);
+    };
+
+    if (animate && !reduce) {
+      figureEl.classList.add('is-switching');
+      setTimeout(() => {
+        applyContent();
+        requestAnimationFrame(() => figureEl.classList.remove('is-switching'));
+      }, 160);
+    } else {
+      applyContent();
+    }
+  }
+
+  function openLightbox(targetSrc, triggerEl) {
+    items = getGalleryItems();
+    const resolved = new URL(targetSrc, location.href).href;
+    let idx = items.findIndex(item => item.src === resolved);
+    if (idx === -1) {
+      items.push({
+        src: resolved,
+        alt: triggerEl?.getAttribute('aria-label') || document.title,
+        kicker: document.title.replace(/\s*—.*$/, '').toUpperCase(),
+        description: triggerEl?.getAttribute('aria-label') || '',
+        isTall: false
+      });
+      idx = items.length - 1;
+    }
+    currentIndex = idx;
+    lastFocused = triggerEl || document.activeElement;
+
+    clearTimeout(closingTimer);
+    dialog.classList.remove('is-closing');
+    renderSlide(false);
+
+    if (!dialog.open) dialog.showModal();
+    document.querySelector('.cursor-ring')?.classList.remove('on');
+    requestAnimationFrame(() => {
+      dialog.classList.add('is-open');
+      closeBtn.focus({ preventScroll: true });
+    });
+  }
+
+  function closeLightbox() {
+    if (!dialog.open || dialog.classList.contains('is-closing')) return;
+    if (reduce) {
+      dialog.classList.remove('is-open', 'is-closing');
+      dialog.close();
+      lastFocused?.focus?.({ preventScroll: true });
+      return;
+    }
+    dialog.classList.remove('is-open');
+    dialog.classList.add('is-closing');
+    closingTimer = setTimeout(() => {
+      dialog.classList.remove('is-closing');
+      if (dialog.open) dialog.close();
+      lastFocused?.focus?.({ preventScroll: true });
+    }, 340);
+  }
+
+  function stepSlide(delta) {
+    if (items.length <= 1) return;
+    currentIndex = (currentIndex + delta + items.length) % items.length;
+    renderSlide(true);
+  }
+
+  caseArticle.addEventListener('click', event => {
+    const link = event.target.closest('a[href]');
+    if (link && imgHrefPattern.test(link.getAttribute('href') || '')) {
+      event.preventDefault();
+      openLightbox(link.href, link);
+      return;
+    }
+    const img = event.target.closest('img');
+    if (img && caseArticle.contains(img)) {
+      event.preventDefault();
+      openLightbox(img.currentSrc || img.src, img);
+    }
+  });
+
+  caseArticle.addEventListener('keydown', event => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    const img = event.target.closest('img[role="button"]');
+    if (img && caseArticle.contains(img)) {
+      event.preventDefault();
+      openLightbox(img.currentSrc || img.src, img);
+    }
+  });
+
+  closeBtn.addEventListener('click', closeLightbox);
+  zoomBtn.addEventListener('click', () => setZoom(!zoomed));
+  imgEl.addEventListener('click', event => {
+    event.stopPropagation();
+    setZoom(!zoomed);
+  });
+  prevBtn.addEventListener('click', event => {
+    event.stopPropagation();
+    stepSlide(-1);
+  });
+  nextBtn.addEventListener('click', event => {
+    event.stopPropagation();
+    stepSlide(1);
+  });
+
+  // Close when clicking the stage backdrop outside the image and buttons.
+  stageEl.addEventListener('click', event => {
+    if (event.target === stageEl || event.target === figureEl) closeLightbox();
+  });
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) closeLightbox();
+  });
+
+  dialog.addEventListener('cancel', event => {
+    event.preventDefault();
+    closeLightbox();
+  });
+
+  dialog.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      stepSlide(-1);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      stepSlide(1);
+    } else if (event.key === 'z' || event.key === 'Z') {
+      event.preventDefault();
+      setZoom(!zoomed);
+    }
+  });
 })();
