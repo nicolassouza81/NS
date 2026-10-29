@@ -4,19 +4,23 @@
   const number = value => String(value).padStart(2, '0');
   const asset = file => new URL(`assets/${file}`, document.querySelector('script[data-portfolio-base]').src).href;
   const caseUrl = id => new URL(`cases/${id}/`, document.querySelector('script[data-portfolio-base]').src).href;
-  const image = p => `<img src="${asset(p.image)}" alt="${p.imageAlt}" width="${p.width}" height="${p.height}" loading="lazy">`;
+  const image = p => `<img src="${asset(p.image)}" alt="${p.imageAlt}" width="${p.width}" height="${p.height}" loading="lazy" decoding="async">`;
 
   const hero = document.getElementById('hero-fan');
   if (hero && Array.isArray(catalogue.featured)) {
     const featured = catalogue.featured.map(id => catalogue.projects.find(p => p.id === id)).filter(Boolean);
-    const heroImage = p => p.id === 'fala-fin' ? 'fin-hoje.webp' : p.image;
-    hero.innerHTML = featured.map((p, i) => {
-      const angle = (-90 + i * 360 / featured.length) * Math.PI / 180;
-      const title = p.heroTitle || p.title;
-      const label = p.heroTag || (p.category === 'branding' ? 'BRANDING' : p.id === 'gran-minha-conta' ? 'APP MOBILE' : p.id === 'fala-fin' ? 'SITE & APP' : 'CONCEITO');
-      const stackTilt = ((i - (featured.length - 1) / 2) * 2.2).toFixed(1);
-      return `<a class="hero-project hero-card-${p.visual}" data-project="${p.name}" data-project-id="${p.id}" href="${caseUrl(p.id)}" aria-label="Abrir case ${p.name}" style="--orbit-x:${Math.cos(angle).toFixed(5)};--orbit-y:${Math.sin(angle).toFixed(5)};--card-tilt:${i % 2 ? 8 : -8}deg;--card-i:${i};--stack-tilt:${stackTilt}deg">${name}<img src="${asset(heroImage(p))}" alt="" width="${p.id === 'fala-fin' ? 402 : p.width}" height="${p.id === 'fala-fin' ? 981 : p.height}" decoding="async"><span class="hero-project-tag">${number(i + 1)} / ${label}</span><strong>${title.join('<br>')}</strong><span class="hero-project-arrow" aria-hidden="true">↗</span></a>`;
-    }).join('');
+    const existingIds = Array.from(hero.querySelectorAll('.hero-project[data-project-id]'), el => el.dataset.projectId);
+    if (existingIds.join(',') !== featured.map(p => p.id).join(',')) {
+      const heroImage = p => p.id === 'fala-fin' ? 'fin-hoje.webp' : p.image;
+      hero.innerHTML = featured.map((p, i) => {
+        const angle = (-90 + i * 360 / featured.length) * Math.PI / 180;
+        const title = p.heroTitle || p.title;
+        const label = p.heroTag || (p.category === 'branding' ? 'BRANDING' : p.id === 'gran-minha-conta' ? 'APP MOBILE' : p.id === 'fala-fin' ? 'SITE & APP' : 'CONCEITO');
+        const stackTilt = ((i - (featured.length - 1) / 2) * 2.2).toFixed(1);
+        const badge = p.visual === 'gran' ? '<div class="hero-gran-name">gran.</div>' : p.visual === 'fin' ? '<div class="hero-fin-label">FALA, FIN<span>✳</span></div>' : '';
+        return `<a class="hero-project hero-card-${p.visual}${i === 0 ? ' is-selected' : ''}" data-project="${p.name}" data-project-id="${p.id}" href="${caseUrl(p.id)}" aria-label="Abrir case ${p.name}" style="--orbit-x:${Math.cos(angle).toFixed(5)};--orbit-y:${Math.sin(angle).toFixed(5)};--card-tilt:${i % 2 ? 8 : -8}deg;--card-i:${i};--stack-tilt:${stackTilt}deg">${badge}<img src="${asset(heroImage(p))}" alt="" width="${p.id === 'fala-fin' ? 402 : p.width}" height="${p.id === 'fala-fin' ? 981 : p.height}" fetchpriority="${i === 0 ? 'high' : 'low'}" decoding="async"><span class="hero-project-tag">${number(i + 1)} / ${label}</span><strong>${title.join('<br>')}</strong><span class="hero-project-arrow" aria-hidden="true">↗</span></a>`;
+      }).join('');
+    }
     document.querySelectorAll('[data-hero-total]').forEach(el => el.textContent = number(featured.length));
   }
 
@@ -28,7 +32,11 @@
     const homeOrder = new Map((catalogue.homeOrder || []).map((id, index) => [id, index]));
     const priority = project => homeOrder.get(project.id) ?? catalogue.projects.length;
     const selection = catalogue.projects.filter(p => !featured.has(p.id)).sort((a, b) => priority(a) - priority(b)).slice(0, catalogue.homeLimit);
-    homeList.innerHTML = selection.map((p, i) => `<article class="work-item index-item"><a href="${caseUrl(p.id)}" class="index-row"><span class="index-number">${number(i + 1)}</span><span class="index-content"><strong>${p.title.join('<br>')}<span class="index-dot">.</span></strong><span class="index-mobile-category">${p.label}</span><span class="index-desc">${p.description}</span></span><span class="index-tags">${p.tags.map(tag => `<span>${tag}</span>`).join('')}</span><span class="index-thumb index-thumb-${p.visual}">${image(p)}</span><span class="index-arrow" aria-hidden="true">↗</span><span class="sr-only">Ver case ${p.name}</span></a></article>`).join('');
+    const existingHomeHrefs = Array.from(homeList.querySelectorAll('a.index-row'), a => a.getAttribute('href') || '');
+    const matchesStatic = existingHomeHrefs.length === selection.length && selection.every((p, i) => existingHomeHrefs[i].includes(`/cases/${p.id}/`));
+    if (!matchesStatic) {
+      homeList.innerHTML = selection.map((p, i) => `<article class="work-item index-item"><a href="${caseUrl(p.id)}" class="index-row"><span class="index-number">${number(i + 1)}</span><span class="index-content"><strong>${p.title.join('<br>')}<span class="index-dot">.</span></strong><span class="index-mobile-category">${p.label}</span><span class="index-desc">${p.description}</span></span><span class="index-tags">${p.tags.map(tag => `<span>${tag}</span>`).join('')}</span><span class="index-thumb index-thumb-${p.visual}">${image(p)}</span><span class="index-arrow" aria-hidden="true">↗</span><span class="sr-only">Ver case ${p.name}</span></a></article>`).join('');
+    }
     document.querySelectorAll('[data-home-total]').forEach(el => el.textContent = number(selection.length));
     document.querySelectorAll('[data-home-plural]').forEach(el => el.textContent = selection.length === 1 ? '' : 'S');
     document.querySelector('.work-index-section').hidden = selection.length === 0;
