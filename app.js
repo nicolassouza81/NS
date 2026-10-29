@@ -8,10 +8,10 @@ if(siteNav){
   siteNav.id='site-navigation';
   const toggle=document.createElement('button');
   toggle.type='button';toggle.className='nav-toggle';toggle.setAttribute('aria-controls',siteNav.id);toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Abrir menu');
-  toggle.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg>';
+  toggle.innerHTML='<i class="hgi hgi-stroke hgi-menu-01" aria-hidden="true"></i>';
   siteHeader.append(toggle);
-  function closeMenu(){siteNav.classList.remove('is-open');siteHeader.classList.remove('menu-open');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Abrir menu');}
-  toggle.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';siteNav.classList.toggle('is-open',open);siteHeader.classList.toggle('menu-open',open);toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');});
+  function closeMenu(){siteNav.classList.remove('is-open');siteHeader.classList.remove('menu-open');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Abrir menu');toggle.innerHTML='<i class="hgi hgi-stroke hgi-menu-01" aria-hidden="true"></i>';}
+  toggle.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';siteNav.classList.toggle('is-open',open);siteHeader.classList.toggle('menu-open',open);toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');toggle.innerHTML=open?'<i class="hgi hgi-stroke hgi-cancel-01" aria-hidden="true"></i>':'<i class="hgi hgi-stroke hgi-menu-01" aria-hidden="true"></i>';});
   siteNav.addEventListener('click',event=>{if(event.target.closest('a'))closeMenu();});
   document.addEventListener('click',event=>{if(!siteHeader.contains(event.target))closeMenu();});
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&toggle.getAttribute('aria-expanded')==='true'){closeMenu();toggle.focus();}});
@@ -20,7 +20,7 @@ if(siteNav){
 if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));}else document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));
 let ticking=false;const progress=document.querySelector('.progress'),orbit=document.querySelector('.orbit');function render(){const total=document.documentElement.scrollHeight-innerHeight;if(progress)progress.style.transform=`scaleX(${total>0?scrollY/total:0})`;if(orbit&&!reduce&&scrollY<1000)orbit.style.transform=`translateY(${scrollY*.08}px) rotate(${-28+scrollY*.018}deg)`;ticking=false}addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(render);ticking=true}},{passive:true});render();
 document.querySelectorAll('[data-gran-theme]').forEach(button=>button.addEventListener('click',()=>{const theme=button.dataset.granTheme;const image=document.getElementById('gran-theme-image');if(!image)return;image.src=new URL(`assets/gran-${theme}.webp`,siteBase).href;image.alt=`Tela Minha Conta do Gran Cursos em tema ${theme==='dark'?'escuro':'claro'}`;image.height=theme==='dark'?1013:1121;document.querySelectorAll('[data-gran-theme]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));}));
-document.getElementById('expand')?.addEventListener('click',e=>{const expanded=document.getElementById('project-window').classList.toggle('expanded');e.currentTarget.setAttribute('aria-expanded',expanded);e.currentTarget.textContent=expanded?'RECOLHER PROJETO −':'EXPANDIR PROJETO +'});
+document.getElementById('expand')?.addEventListener('click',e=>{const expanded=document.getElementById('project-window').classList.toggle('expanded');e.currentTarget.setAttribute('aria-expanded',expanded);e.currentTarget.innerHTML=expanded?'RECOLHER PROJETO <i class="hgi hgi-stroke hgi-remove-01" aria-hidden="true"></i>':'EXPANDIR PROJETO <i class="hgi hgi-stroke hgi-add-01" aria-hidden="true"></i>'});
 document.getElementById('contact-open')?.addEventListener('click',()=>{const panel=document.getElementById('contact-panel');panel.hidden=!panel.hidden;if(!panel.hidden)document.getElementById('message').focus()});document.getElementById('copy')?.addEventListener('click',async()=>{const message=document.getElementById('message');try{await navigator.clipboard.writeText(message.value);document.getElementById('copy-status').textContent='Mensagem copiada.'}catch{message.select();document.getElementById('copy-status').textContent='Selecione a mensagem e use copiar no seu dispositivo.'}});
 // The home selection is capped by portfolio.js; the collection shows the full catalogue.
 const finTabs=Array.from(document.querySelectorAll('[data-fin-view]'));
@@ -28,23 +28,65 @@ function showFinView(button){finTabs.forEach(tab=>{const selected=tab===button;t
 finTabs.forEach((button,i)=>{button.addEventListener('click',()=>showFinView(button));button.addEventListener('keydown',e=>{let target;if(e.key==='ArrowRight')target=(i+1)%finTabs.length;if(e.key==='ArrowLeft')target=(i-1+finTabs.length)%finTabs.length;if(e.key==='Home')target=0;if(e.key==='End')target=finTabs.length-1;if(target!==undefined){e.preventDefault();showFinView(finTabs[target]);finTabs[target].focus();}});});
 const fanCards=Array.from(document.querySelectorAll('.hero-project'));
 const heroSelection=document.getElementById('hero-selected'),heroLink=document.querySelector('.hero-selected-link');let heroSelected=0,heroTurn=0;
+const ovalArcTable=(()=>{const steps=360,rx=1.84,cum=[0];for(let k=1;k<=steps;k++){const a=(-90+(k-.5)*360/steps)*Math.PI/180;cum[k]=cum[k-1]+Math.hypot(rx*Math.sin(a),Math.cos(a));}const total=cum[steps];return u=>{const target=((u%1)+1)%1*total;let lo=0,hi=steps;while(lo<hi){const mid=(lo+hi)>>1;if(cum[mid]<target)lo=mid+1;else hi=mid;}const i=Math.max(1,lo),frac=(target-cum[i-1])/(cum[i]-cum[i-1]||1);return(-90+(i-1+frac)*360/steps)*Math.PI/180;};})();
 function selectHeroProject(index,rotate=false){
   if(!fanCards.length)return;
-  if(rotate)heroTurn+=index-heroSelected;
+  if(rotate){heroTurn+=index-heroSelected;document.querySelector('.hero-stage')?.classList.add('is-bloomed','bloom-complete');}
   heroSelected=(index+fanCards.length)%fanCards.length;
   fanCards.forEach((card,i)=>{
     card.classList.toggle('is-selected',i===heroSelected);
     if(i===heroSelected)card.setAttribute('aria-current','true');else card.removeAttribute('aria-current');
-    const angle=(-90+(i-heroTurn)*360/fanCards.length)*Math.PI/180;
+    const angle=ovalArcTable((i-heroTurn)/fanCards.length),ox=Math.cos(angle),oy=Math.sin(angle),focus=(1-oy)/2,tilt=(ox*5.5+(i%2?3.2:-3.2))*(.35+(1-focus)*.65);
     card.style.setProperty('--orbit-x',Math.cos(angle).toFixed(5));
-    card.style.setProperty('--orbit-y',Math.sin(angle).toFixed(5));
+    card.style.setProperty('--orbit-y',oy.toFixed(5));card.style.setProperty('--card-tilt',`${tilt.toFixed(1)}deg`);card.style.setProperty('--card-scale',(.90+focus*.13).toFixed(3));card.style.setProperty('--step-delay',`${Math.round((1-focus)*85)}ms`);
   });
   const selected=fanCards[heroSelected];
-  if(heroSelection)heroSelection.textContent=`${String(heroSelected+1).padStart(2,'0')} / ${selected.dataset.project.toUpperCase()}`;
+  if(heroSelection)heroSelection.textContent=`${String(fanCards.length-heroSelected).padStart(2,'0')} / ${selected.dataset.project.toUpperCase()}`;
   if(heroLink){heroLink.href=selected.href;heroLink.setAttribute('aria-label',`Abrir case ${selected.dataset.project}`);}
 }
 document.querySelector('.hero-side-left')?.addEventListener('click',()=>selectHeroProject(heroSelected-1,true));
 document.querySelector('.hero-side-right')?.addEventListener('click',()=>selectHeroProject(heroSelected+1,true));
+(()=>{
+  const heroFanEl=document.getElementById('hero-fan');
+  if(!heroFanEl||reduce||!matchMedia('(hover: hover) and (pointer: fine)').matches)return;
+  let hoverDir=0,hoverDelay=null,hoverLoop=null;
+  const stopHoverAdvance=()=>{hoverDir=0;clearTimeout(hoverDelay);clearInterval(hoverLoop);hoverDelay=hoverLoop=null;};
+  document.querySelector('.hero-side-left')?.addEventListener('click',stopHoverAdvance);
+  document.querySelector('.hero-side-right')?.addEventListener('click',stopHoverAdvance);
+  const areAllCardsVisible=()=>{
+    if(!fanCards.length)return true;
+    const vh=window.innerHeight,vw=window.innerWidth;
+    const headerEl=document.querySelector('body>header');
+    const topLimit=headerEl&&!headerEl.classList.contains('is-hidden')?Math.max(0,headerEl.getBoundingClientRect().bottom):0;
+    return fanCards.every(card=>{
+      const r=card.getBoundingClientRect(),pad=card.matches(':hover')?16:2;
+      return r.top>=topLimit-pad&&r.bottom<=vh+pad&&r.left>=-pad&&r.right<=vw+pad;
+    });
+  };
+  const startHoverAdvance=dir=>{
+    if(areAllCardsVisible()){stopHoverAdvance();return;}
+    if(dir===hoverDir)return;
+    stopHoverAdvance();
+    hoverDir=dir;
+    if(!dir)return;
+    hoverDelay=setTimeout(()=>{
+      if(areAllCardsVisible()){stopHoverAdvance();return;}
+      selectHeroProject(heroSelected+hoverDir,true);
+      hoverLoop=setInterval(()=>{
+        if(areAllCardsVisible()){stopHoverAdvance();return;}
+        selectHeroProject(heroSelected+hoverDir,true);
+      },1150);
+    },320);
+  };
+  heroFanEl.addEventListener('pointermove',e=>{
+    if(!e.target.closest('.hero-project')||areAllCardsVisible()){stopHoverAdvance();return;}
+    const r=heroFanEl.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),zone=r.width*.12;
+    startHoverAdvance(dx>zone?1:dx<-zone?-1:0);
+  });
+  heroFanEl.addEventListener('pointerleave',stopHoverAdvance);
+  addEventListener('scroll',()=>{if(hoverDir&&areAllCardsVisible())stopHoverAdvance();},{passive:true});
+  addEventListener('resize',()=>{if(hoverDir&&areAllCardsVisible())stopHoverAdvance();},{passive:true});
+})();
 fanCards.forEach((card,i)=>card.addEventListener('focus',()=>selectHeroProject(i)));
 document.getElementById('hero-fan')?.addEventListener('keydown',e=>{
   if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();selectHeroProject(heroSelected+(e.key==='ArrowRight'?1:-1),true);if(e.target!==e.currentTarget)fanCards[heroSelected].focus({preventScroll:true});}
@@ -56,12 +98,16 @@ if (heroStage) {
   if (reduce) {
     heroStage.classList.add('is-bloomed', 'bloom-complete');
   } else {
-    setTimeout(() => {
-      heroStage.classList.add('is-bloomed');
-      setTimeout(() => {
-        heroStage.classList.add('bloom-complete');
-      }, 1600);
-    }, 280);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          heroStage.classList.add('is-bloomed');
+          setTimeout(() => {
+            heroStage.classList.add('bloom-complete');
+          }, 1750);
+        }, 220);
+      });
+    });
   }
 }
 const connectionSection=document.querySelector('.connections');const connectionTiles=Array.from(document.querySelectorAll('.connection-tile'));let connectionTicking=false;
@@ -90,10 +136,10 @@ if(!reduce&&'IntersectionObserver' in window){
 if(!fine||reduce)return;
 
 // Magnetic call-to-actions.
-document.querySelectorAll('.connections-link,.about-primary,.about-contact,.contact-button,.hero-scroll-btn,.hero-dock-btn,.home-page nav a:last-child').forEach(el=>{el.classList.add('magnetic');el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();el.style.translate=`${(e.clientX-r.left-r.width/2)*.22}px ${(e.clientY-r.top-r.height/2)*.35}px`});el.addEventListener('pointerleave',()=>{el.style.translate=''})});
+document.querySelectorAll('.connections-link,.about-primary,.about-contact,.contact-button,.hero-scroll-btn,.home-page nav a:last-child').forEach(el=>{el.classList.add('magnetic');el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();el.style.translate=`${(e.clientX-r.left-r.width/2)*.22}px ${(e.clientY-r.top-r.height/2)*.35}px`});el.addEventListener('pointerleave',()=>{el.style.translate=''})});
 
 // Contextual cursor ring & chromatic glitch trail (desktop fine pointer).
-const ring=document.createElement('div');ring.className='cursor-ring';ring.setAttribute('aria-hidden','true');ring.innerHTML='<span>VER ↗</span>';document.body.append(ring);
+const ring=document.createElement('div');ring.className='cursor-ring';ring.setAttribute('aria-hidden','true');ring.innerHTML='<span>VER <i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></span>';document.body.append(ring);
 
 const canvas=document.createElement('canvas');canvas.className='cursor-glitch-canvas';canvas.setAttribute('aria-hidden','true');document.body.append(canvas);
 const ctx=canvas.getContext('2d');
@@ -264,7 +310,7 @@ document.addEventListener('pointerover',e=>{
   const t=e.target.closest?.(`${viewSel},${zoomSel},a,button,textarea`);
   const isZoom=!!t&&t.matches(zoomSel);
   const isView=!!t&&(t.matches(viewSel)||isZoom);
-  if(ringLabel)ringLabel.textContent=isZoom?'AMPLIAR':'VER ↗';
+  if(ringLabel)ringLabel.innerHTML=isZoom?'AMPLIAR <i class="hgi hgi-stroke hgi-search-add" aria-hidden="true"></i>':'VER <i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i>';
   ring.classList.toggle('is-view',isView);
   ring.classList.toggle('is-link',!!t&&!isView);
 });
@@ -429,20 +475,20 @@ if(!reduce){
         <span class="lightbox-kicker" data-lightbox-kicker></span>
       </div>
       <div class="lightbox-actions">
-        <button type="button" class="lightbox-btn" data-lightbox-zoom aria-pressed="false">Ampliar 100% ⊕</button>
-        <button type="button" class="lightbox-btn" data-lightbox-close aria-label="Fechar visualização">Fechar ✕</button>
+        <button type="button" class="lightbox-btn" data-lightbox-zoom aria-pressed="false">Ampliar 100% <i class="hgi hgi-stroke hgi-search-add" aria-hidden="true"></i></button>
+        <button type="button" class="lightbox-btn" data-lightbox-close aria-label="Fechar visualização">Fechar <i class="hgi hgi-stroke hgi-cancel-01" aria-hidden="true"></i></button>
       </div>
     </div>
     <div class="lightbox-stage" data-lightbox-stage>
-      <button type="button" class="lightbox-nav lightbox-prev" data-lightbox-prev aria-label="Imagem anterior">‹</button>
+      <button type="button" class="lightbox-nav lightbox-prev" data-lightbox-prev aria-label="Imagem anterior"><i class="hgi hgi-stroke hgi-arrow-left-01" aria-hidden="true"></i></button>
       <figure class="lightbox-figure" data-lightbox-figure>
         <img class="lightbox-img" data-lightbox-img src="" alt="">
       </figure>
-      <button type="button" class="lightbox-nav lightbox-next" data-lightbox-next aria-label="Próxima imagem">›</button>
+      <button type="button" class="lightbox-nav lightbox-next" data-lightbox-next aria-label="Próxima imagem"><i class="hgi hgi-stroke hgi-arrow-right-01" aria-hidden="true"></i></button>
     </div>
     <div class="lightbox-footer">
       <p class="lightbox-caption" data-lightbox-caption></p>
-      <span class="lightbox-hint">SETAS ‹ › PARA NAVEGAR · CLIQUE NA IMAGEM PARA ZOOM · ESC PARA FECHAR</span>
+      <span class="lightbox-hint">SETAS <i class="hgi hgi-stroke hgi-arrow-left-01" aria-hidden="true"></i> <i class="hgi hgi-stroke hgi-arrow-right-01" aria-hidden="true"></i> PARA NAVEGAR · CLIQUE NA IMAGEM PARA ZOOM · ESC PARA FECHAR</span>
     </div>
   `;
   document.body.append(dialog);
@@ -468,7 +514,7 @@ if(!reduce){
     zoomed = Boolean(nextZoom);
     stageEl.classList.toggle('is-zoomed', zoomed);
     zoomBtn.setAttribute('aria-pressed', String(zoomed));
-    zoomBtn.textContent = zoomed ? 'Ajustar à tela ⊖' : 'Ampliar 100% ⊕';
+    zoomBtn.innerHTML = zoomed ? 'Ajustar à tela <i class="hgi hgi-stroke hgi-search-minus" aria-hidden="true"></i>' : 'Ampliar 100% <i class="hgi hgi-stroke hgi-search-add" aria-hidden="true"></i>';
     if (!zoomed) stageEl.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }
 
