@@ -37,7 +37,7 @@ O projeto já inclui o arquivo `.htaccess` configurado especificamente para a in
    - `404.html`
    - `index.html`
    - `style.css` e `portfolio.css`
-   - `app.js`, `portfolio.js`, `projects.js`
+   - `app.js`, `portfolio.js`, `projects.js` e `i18n.js`
    - Pasta `assets/`
    - Pasta `cases/`
    - Pasta `projetos/`
@@ -47,7 +47,7 @@ O projeto já inclui o arquivo `.htaccess` configurado especificamente para a in
 - **URLs Amigáveis**: `/projetos/` e `/cases/adizero-racing/` sem extensão `.html` visível.
 - **Forçar HTTPS**: Redirecionamento 301 automático e canônico.
 - **Compressão GZIP/Deflate**: Reduz em até 70% o tráfego de dados e acelera o Core Web Vitals (LCP/FID).
-- **Cache de Navegador**: 1 ano para imagens (`webp`, `png`, `jpg`, `svg`), fontes e scripts; revalidação imediata para HTML.
+- **Cache de Navegador**: HTML sem armazenamento; CSS e JavaScript com revalidação imediata; mídias e fontes com cache de 30 dias e revalidação.
 - **Cabeçalhos de Segurança**: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`.
 - **Página 404 Personalizada**: Qualquer rota inválida exibe `404.html` integrada à identidade visual do portfólio.
 
@@ -65,6 +65,7 @@ ns/
 ├── app.js                # Comportamentos globais, navegação mobile acessível, motion e glitch
 ├── portfolio.js          # Lógica do catálogo, órbita hero, filtros, busca e auto-wiring do Próximo Case
 ├── projects.js           # Catálogo compartilhado central de todos os projetos
+├── i18n.js               # Traduções PT/EN/ES e seletor de idioma
 ├── novo-projeto.js       # Script CLI para criar um novo case em segundos
 ├── assets/               # Imagens otimizadas (webp/png/svg) dos projetos e identidade
 ├── cases/                # Páginas individuais dos cases

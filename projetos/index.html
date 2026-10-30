@@ -16,14 +16,14 @@
   <link rel="stylesheet" href="../portfolio.css">
 </head>
 <body class="projects-page" id="top">
-  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <a class="skip-link" href="#conteudo" data-i18n="nav.skip">Pular para o conteúdo</a>
   <div class="progress" aria-hidden="true"></div>
   <header>
     <a class="brand" href="../" aria-label="Nícolas Souza início">ns<span>®</span></a>
     <nav aria-label="Principal">
-      <a href="./" aria-current="page">Trabalhos <sup data-project-total>15</sup></a>
-      <a href="../#sobre">Sobre</a>
-      <a href="https://wa.me/5561999235548?text=Ol%C3%A1%2C%20N%C3%ADcolas!%20Conheci%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto%20de%20design." target="_blank" rel="noopener noreferrer">Vamos conversar <span><i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></span></a>
+      <a href="./" aria-current="page" data-i18n="nav.works" data-i18n-preserve>Trabalhos <sup data-project-total>18</sup></a>
+      <a href="../#sobre" data-i18n="nav.about">Sobre</a>
+      <a href="https://wa.me/5561999235548?text=Ol%C3%A1%2C%20N%C3%ADcolas!%20Conheci%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto%20de%20design." target="_blank" rel="noopener noreferrer"><span data-i18n="nav.contact">Vamos conversar</span> <span><i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></span></a>
     </nav>
   </header>
   <main id="conteudo">
@@ -33,20 +33,23 @@
         <h1 id="collection-title">IDEIAS QUE<br>GANHAM <em>FORMA.</em><span class="collection-title-dot" aria-hidden="true"><i class="hgi hgi-stroke hgi-sparkles" aria-hidden="true"></i></span></h1>
         <div class="collection-intro-side"><span class="collection-edition">PORTFÓLIO '26 / SELEÇÃO COMPLETA</span><p>Interfaces, marcas e experiências.<br>Um olhar atento para cada problema.<br>Uma intenção em cada escolha.</p><a href="#colecao">EXPLORE OS PROJETOS <span aria-hidden="true"><i class="hgi hgi-stroke hgi-arrow-down-01" aria-hidden="true"></i></span></a></div>
       </div>
-      <div class="collection-intro-bottom"><span>UX/UI · PRODUTOS DIGITAIS · BRANDING</span><span>( <span data-project-total>15</span> PROJETOS )</span></div>
+      <div class="collection-intro-bottom"><span>UX/UI · PRODUTOS DIGITAIS · BRANDING</span><span>( <span data-project-total>18</span> PROJETOS )</span></div>
     </section>
     <section class="collection-section" id="colecao" aria-label="Todos os projetos">
       <div class="collection-toolbar">
         <div class="collection-filters" role="group" aria-label="Filtrar projetos por disciplina">
-          <button type="button" data-project-filter="all" aria-pressed="true" aria-controls="project-collection">Todos <span>15</span></button>
+          <button type="button" data-project-filter="all" aria-pressed="true" aria-controls="project-collection"><span data-i18n="collection.filter_all">Todos</span> <span>18</span></button>
           <button type="button" data-project-filter="ux" aria-pressed="false" aria-controls="project-collection">UX/UI <span>05</span></button>
-          <button type="button" data-project-filter="branding" aria-pressed="false" aria-controls="project-collection">Branding <span>09</span></button>
+          <button type="button" data-project-filter="branding" aria-pressed="false" aria-controls="project-collection">Branding <span>12</span></button>
           <button type="button" data-project-filter="art" aria-pressed="false" aria-controls="project-collection">Direção de arte <span>01</span></button>
         </div>
         <label class="collection-search" for="project-search"><span aria-hidden="true"><i class="hgi hgi-stroke hgi-search-01" aria-hidden="true"></i></span><span class="sr-only">Buscar projetos por nome ou disciplina</span><input id="project-search" type="search" placeholder="Buscar projeto" autocomplete="off" aria-controls="project-collection"></label>
       </div>
-      <div class="collection-results-bar"><span>PROJETO / EXPERIÊNCIA</span><span id="collection-status" role="status" aria-live="polite">15 PROJETOS</span></div>
+      <div class="collection-results-bar"><span>PROJETO / EXPERIÊNCIA</span><span id="collection-status" role="status" aria-live="polite">18 PROJETOS</span></div>
       <div class="collection-grid" id="project-collection" data-project-collection>
+        <a href="../cases/bike-registrada/">BikeRegistrada <i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></a>
+        <a href="../cases/syn-saude/">SYN Saúde <i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></a>
+        <a href="../cases/adrenalina/">Adrenalina Sport Bike <i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></a>
         <a href="../cases/confraria-fortifica/">Confraria Fortifica — Website <i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></a>
         <a href="../cases/nkz-biblioteca/">NKZ — Biblioteca Digital <i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></a>
         <a href="../cases/true-website/">TRUE Eventos — Website <i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></a>
@@ -64,11 +67,12 @@
         <a href="../cases/adizero-racing/">Adizero Racing <i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></a>
       </div>
       <div class="collection-empty" id="collection-empty" hidden><span aria-hidden="true"><i class="hgi hgi-stroke hgi-sparkles" aria-hidden="true"></i></span><h2>Nenhum projeto por aqui.</h2><p>Experimente outro nome ou explore a seleção completa.</p><button type="button" id="reset-filters">Ver todos os projetos <span aria-hidden="true"><i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></span></button></div>
-      <div class="collection-end"><span>IDEIA · FORMA · EXPERIÊNCIA</span><a href="#top">VOLTAR AO TOPO <i class="hgi hgi-stroke hgi-arrow-up-01" aria-hidden="true"></i></a></div>
+      <div class="collection-end"><span>IDEIA · FORMA · EXPERIÊNCIA</span><a href="#top"><span data-i18n="nav.back_to_top">VOLTAR AO TOPO</span> <i class="hgi hgi-stroke hgi-arrow-up-01" aria-hidden="true"></i></a></div>
     </section>
     <section class="collection-contact" aria-labelledby="collection-contact-title"><div><span class="index-kicker">O PRÓXIMO PROJETO PODE SER O SEU.</span><h2 id="collection-contact-title">VAMOS DAR<br><em>FORMA?</em></h2></div><a href="https://wa.me/5561999235548?text=Ol%C3%A1%2C%20N%C3%ADcolas!%20Conheci%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto%20de%20design." target="_blank" rel="noopener noreferrer">VAMOS CONVERSAR <span aria-hidden="true"><i class="hgi hgi-stroke hgi-arrow-up-right-01" aria-hidden="true"></i></span></a></section>
   </main>
-  <footer><a class="brand" href="../" aria-label="Nícolas Souza início">ns<span>®</span></a><span>DESIGN COM INTENÇÃO. FEITO EM BRASÍLIA.</span><a href="#top">VOLTAR AO TOPO <i class="hgi hgi-stroke hgi-arrow-up-01" aria-hidden="true"></i></a></footer>
+  <footer><a class="brand" href="../" aria-label="Nícolas Souza início">ns<span>®</span></a><span data-i18n="footer.brand_tagline">DESIGN COM INTENÇÃO. FEITO EM BRASÍLIA.</span><a href="#top">VOLTAR AO TOPO <i class="hgi hgi-stroke hgi-arrow-up-01" aria-hidden="true"></i></a></footer>
+  <script src="../i18n.js"></script>
   <script src="../projects.js" data-portfolio-base></script>
   <script src="../portfolio.js"></script>
   <script src="../app.js"></script>
