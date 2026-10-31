@@ -586,12 +586,12 @@
     }
 
     // Footer
-    const footerTagline = document.querySelector('footer span');
+    const footerTagline = document.querySelector('footer > span');
     if (footerTagline && !footerTagline.hasAttribute('data-i18n')) {
       footerTagline.textContent = t('footer.brand_tagline', lang);
     }
-    const footerTop = document.querySelector('footer a[href^="#"]');
-    if (footerTop && !footerTop.querySelector('[data-i18n]')) {
+    const footerTop = document.querySelector('footer > a[href^="#"]:not(.brand)');
+    if (footerTop && !footerTop.hasAttribute('data-i18n') && !footerTop.querySelector('[data-i18n]')) {
       const icon = footerTop.querySelector('i')?.outerHTML || '↑';
       footerTop.innerHTML = `${t('nav.back_to_top', lang)} ${icon}`;
     }
