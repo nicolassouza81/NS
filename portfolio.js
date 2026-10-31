@@ -75,9 +75,10 @@
       const label = getHeroTag(p);
       const stackTilt = ((i - (featured.length - 1) / 2) * 2.2).toFixed(1);
       const badge = p.visual === 'gran' ? '<div class="hero-gran-name">gran.</div>' : p.visual === 'fin' ? '<div class="hero-fin-label">FALA, FIN<span><i class="hgi hgi-stroke hgi-sparkles" aria-hidden="true"></i></span></div>' : '';
-      return `<a class="hero-project hero-card-${p.visual}${i === 0 ? ' is-selected' : ''}" data-project="${p.name}" data-project-id="${p.id}" href="${caseUrl(p.id)}" aria-label="${openCaseLabel} ${p.name}" style="--orbit-x:${Math.cos(angle).toFixed(5)};--orbit-y:${Math.sin(angle).toFixed(5)};--card-tilt:${i % 2 ? 8 : -8}deg;--card-i:${i};--stack-tilt:${stackTilt}deg">${badge}<img src="${asset(heroImage(p))}" alt="" width="${p.id === 'fala-fin' ? 402 : p.width}" height="${p.id === 'fala-fin' ? 981 : p.height}" fetchpriority="${i === 0 ? 'high' : 'low'}" decoding="async"><span class="hero-project-tag">${number(featured.length - i)} / ${label}</span><strong>${title.join('<br>')}</strong><span class="hero-project-arrow" aria-hidden="true"><i class="hgi hgi-stroke hgi-arrow-up-right-01"></i></span></a>`;
+      return `<a class="hero-project hero-card-${p.visual}${i === 0 ? ' is-selected' : ''}" data-project="${p.name}" data-project-id="${p.id}" href="${caseUrl(p.id)}" aria-label="${openCaseLabel} ${p.name}" style="--orbit-x:${Math.cos(angle).toFixed(5)};--orbit-y:${Math.sin(angle).toFixed(5)};--card-tilt:${i % 2 ? 8 : -8}deg;--card-i:${i};--stack-tilt:${stackTilt}deg">${badge}<img src="${asset(heroImage(p))}" alt="" width="${p.id === 'fala-fin' ? 402 : p.width}" height="${p.id === 'fala-fin' ? 981 : p.height}" fetchpriority="${i === 0 ? 'high' : 'low'}" decoding="async"><span class="hero-project-tag">${number(i + 1)} / ${label}</span><strong>${title.join('<br>')}</strong><span class="hero-project-arrow" aria-hidden="true"><i class="hgi hgi-stroke hgi-arrow-up-right-01"></i></span></a>`;
     }).join('');
     document.querySelectorAll('[data-hero-total]').forEach(el => el.textContent = number(featured.length));
+    window.dispatchEvent(new CustomEvent('ns:hero-rendered'));
   }
   if (hero) renderHeroFan();
 

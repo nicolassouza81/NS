@@ -152,6 +152,8 @@ nav a[aria-current="page"]{text-decoration:underline;text-decoration-color:var(-
 .home-page .hero-dock-btn{width:44px;height:44px;flex-shrink:0}
 .home-page .hero-dock-status{padding:0 10px;font-size:9px;letter-spacing:.6px;min-width:0}
 .hero-selected-link{display:inline-grid;place-items:center;width:44px;height:44px;border-left:1px solid var(--rule);font-size:20px}
+.hero-gesture-hint{display:none}
+.hero-selected-count{margin-right:6px}
 .home-page .hero-footnote{margin-top:16px;padding-bottom:30px;font-size:9px}
 .home-page .index-bottom{align-items:center}
 .home-page .index-bottom a{font-size:11px;display:inline-flex;gap:20px;align-items:center;min-height:44px;padding:10px 17px;border:1px solid #a4ab9b;border-radius:30px}
@@ -536,6 +538,42 @@ footer{line-height:1.7}
   html{scroll-behavior:auto}
   .home-page .hero-project,.home-page .hero-project:hover,.home-page .hero-project:focus-visible{transform:translate(-50%,-50%) translate(calc(var(--orbit-x)*var(--orbit-rx)),calc(var(--orbit-y)*var(--orbit-ry))) rotate(var(--card-tilt))!important;transition:none}
   .collection-visual>img,.collection-open,.collection-card-link h2{transition:none}
+}
+
+/* On small screens the orbit brings one readable project forward, with two previews. */
+@media(max-width:760px){
+  .js .home-page .hero-stage{--orbit-card-width:clamp(172px,51vw,226px);--mobile-step:clamp(128px,38vw,210px);--mobile-card-height:calc(var(--orbit-card-width)*1.26);height:calc(var(--mobile-card-height) + 155px);margin-top:22px;isolation:isolate}
+  .js .home-page .hero-arc{top:calc(var(--mobile-card-height)*.55 + 22px);width:100%;height:calc(var(--mobile-card-height)*.77);opacity:.6}
+  .js .home-page .hero-arc::after{inset:20px}
+  .js .home-page .hero-orbit-center{display:none}
+  .js .home-page .hero-fan{inset:-12px calc(var(--gutter)*-1) 100px;overflow:hidden;touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none}
+  .js .home-page .hero-fan:focus-visible{outline:2px solid #92998a;outline-offset:-8px;border-radius:24px}
+  .js .home-page .hero-stage .hero-project{top:calc(var(--mobile-card-height)/2 + 34px);height:var(--mobile-card-height);border-radius:16px;outline-offset:5px;opacity:0;visibility:hidden;pointer-events:none;box-shadow:0 15px 28px #24262218;transform:translate(-50%,-50%) translateX(calc(var(--mobile-slot,0)*var(--mobile-step) + var(--drag-x,0px))) translateY(calc(var(--mobile-distance,0)*18px)) rotate(calc(var(--mobile-slot,0)*8deg)) scale(calc(1 - var(--mobile-distance,0)*.18))!important;transition:transform .32s cubic-bezier(.22,.61,.36,1),opacity .25s,box-shadow .25s!important}
+  .js .home-page .hero-stage .hero-project.is-neighbor{visibility:visible;opacity:.5;z-index:2;outline-color:transparent;pointer-events:auto}
+  .js .home-page .hero-stage .hero-project.is-selected{visibility:visible;opacity:1;pointer-events:auto;z-index:5;outline-color:var(--red);box-shadow:0 20px 35px #24262222}
+  .js .home-page .hero-stage .hero-project:focus-visible{outline:3px solid var(--ink)}
+  .js .home-page .hero-fan.is-dragging .hero-project{transition:none!important;cursor:grabbing}
+  .js .home-page .hero-project-tag{font-size:10px;line-height:1.4;top:14px;left:14px;right:14px;width:fit-content;max-width:calc(100% - 28px);box-sizing:border-box;padding:6px 9px;border-radius:12px}
+  .js .home-page .hero-project strong{left:14px;right:35px;bottom:18px;font-size:clamp(24px,6.2vw,30px);line-height:1;letter-spacing:-.055em}
+  .js .home-page .hero-project-arrow{right:12px;bottom:16px;font-size:23px}
+  .js .home-page .hero-card-gran strong,.js .home-page .hero-card-fin strong{left:10px;right:34px;bottom:14px;font-size:23px;padding:6px}
+  .js .home-page .hero-card-gran>img,.js .home-page .hero-card-fin>img{inset:78px 18px auto auto;max-height:190px}
+  .js .home-page .hero-gran-name{font-size:36px;top:48px}
+  .js .home-page .hero-fin-label{font-size:19px;top:54px}
+  .js .home-page .hero-gesture-hint{display:block;position:absolute;bottom:82px;left:0;right:0;margin:0;text-align:center;font:500 11px/1.6 var(--font-body);color:#596052;letter-spacing:0;pointer-events:none}
+  .js .home-page .hero-dock{box-sizing:border-box;width:100%;max-width:380px;bottom:6px;padding:7px;gap:8px;border-radius:22px;background:var(--paper);box-shadow:0 8px 24px #2426220c}
+  .js .home-page .hero-dock-btn{width:44px;height:44px;font-size:20px}
+  .js .home-page .hero-dock-status{flex:1;justify-content:center;padding:0;white-space:normal;overflow-wrap:anywhere;letter-spacing:0}
+  .js .home-page .hero-dock-dot{display:none}
+  .js .home-page #hero-selected{display:flex;flex-direction:column;gap:3px;line-height:1.3;text-align:left}
+  .js .home-page .hero-selected-count{font-size:10px;letter-spacing:1px;color:#596052;margin:0}
+  .js .home-page .hero-selected-name{font:800 12px/1.25 var(--font-display);letter-spacing:-.02em}
+  .js .home-page .hero-selected-link{flex-shrink:0;width:44px;height:44px;border:0;border-radius:50%;background:var(--ink);color:var(--paper)}
+  .js .home-page .hero-footnote{align-items:center;flex-wrap:wrap;gap:8px 16px;margin-top:8px;font-size:9px;line-height:1.5}
+  .js .home-page .hero-scroll-btn{min-height:44px;display:inline-flex;align-items:center;gap:8px}
+}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){
+  .js .home-page .hero-stage .hero-project{transition:none!important}
 }
 
 /* ===== In-page animated image lightbox ===== */

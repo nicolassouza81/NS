@@ -63,23 +63,43 @@ document.getElementById('contact-open')?.addEventListener('click',()=>{const pan
 const finTabs=Array.from(document.querySelectorAll('[data-fin-view]'));
 function showFinView(button){finTabs.forEach(tab=>{const selected=tab===button;tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1;document.getElementById(tab.getAttribute('aria-controls')).hidden=!selected;});}
 finTabs.forEach((button,i)=>{button.addEventListener('click',()=>showFinView(button));button.addEventListener('keydown',e=>{let target;if(e.key==='ArrowRight')target=(i+1)%finTabs.length;if(e.key==='ArrowLeft')target=(i-1+finTabs.length)%finTabs.length;if(e.key==='Home')target=0;if(e.key==='End')target=finTabs.length-1;if(target!==undefined){e.preventDefault();showFinView(finTabs[target]);finTabs[target].focus();}});});
-const fanCards=Array.from(document.querySelectorAll('.hero-project'));
+let fanCards=Array.from(document.querySelectorAll('.hero-project'));
+const heroFan=document.getElementById('hero-fan'),heroMobile=matchMedia('(max-width:760px)');
 const heroSelection=document.getElementById('hero-selected'),heroLink=document.querySelector('.hero-selected-link');let heroSelected=0,heroTurn=0;
 const ovalArcTable=(()=>{const steps=360,rx=1.84,cum=[0];for(let k=1;k<=steps;k++){const a=(-90+(k-.5)*360/steps)*Math.PI/180;cum[k]=cum[k-1]+Math.hypot(rx*Math.sin(a),Math.cos(a));}const total=cum[steps];return u=>{const target=((u%1)+1)%1*total;let lo=0,hi=steps;while(lo<hi){const mid=(lo+hi)>>1;if(cum[mid]<target)lo=mid+1;else hi=mid;}const i=Math.max(1,lo),frac=(target-cum[i-1])/(cum[i]-cum[i-1]||1);return(-90+(i-1+frac)*360/steps)*Math.PI/180;};})();
 function selectHeroProject(index,rotate=false){
   if(!fanCards.length)return;
   if(rotate){heroTurn+=index-heroSelected;document.querySelector('.hero-stage')?.classList.add('is-bloomed','bloom-complete');}
   heroSelected=(index+fanCards.length)%fanCards.length;
+  const moveFocus=heroMobile.matches&&fanCards.includes(document.activeElement)&&document.activeElement!==fanCards[heroSelected];
+  if(moveFocus)heroFan.focus({preventScroll:true});
   fanCards.forEach((card,i)=>{
-    card.classList.toggle('is-selected',i===heroSelected);
-    if(i===heroSelected)card.setAttribute('aria-current','true');else card.removeAttribute('aria-current');
+    const selected=i===heroSelected;
+    card.classList.toggle('is-selected',selected);
+    if(selected)card.setAttribute('aria-current','true');else card.removeAttribute('aria-current');
+    let slot=(i-heroSelected+fanCards.length)%fanCards.length;
+    if(slot>fanCards.length/2)slot-=fanCards.length;
+    card.style.setProperty('--mobile-slot',Math.max(-2,Math.min(2,slot)));
+    card.style.setProperty('--mobile-distance',Math.min(2,Math.abs(slot)));
+    card.classList.toggle('is-neighbor',Math.abs(slot)===1);
+    card.tabIndex=heroMobile.matches&&!selected?-1:0;
+    if(heroMobile.matches&&!selected)card.setAttribute('aria-hidden','true');else card.removeAttribute('aria-hidden');
+    card.draggable=false;
+    const img=card.querySelector('img');if(img)img.draggable=false;
     const angle=ovalArcTable((i-heroTurn)/fanCards.length),ox=Math.cos(angle),oy=Math.sin(angle),focus=(1-oy)/2,tilt=(ox*5.5+(i%2?3.2:-3.2))*(.35+(1-focus)*.65);
     card.style.setProperty('--orbit-x',Math.cos(angle).toFixed(5));
     card.style.setProperty('--orbit-y',oy.toFixed(5));card.style.setProperty('--card-tilt',`${tilt.toFixed(1)}deg`);card.style.setProperty('--card-scale',(.90+focus*.13).toFixed(3));card.style.setProperty('--step-delay',`${Math.round((1-focus)*85)}ms`);
   });
   const selected=fanCards[heroSelected];
-  if(heroSelection)heroSelection.textContent=`${String(fanCards.length-heroSelected).padStart(2,'0')} / ${selected.dataset.project.toUpperCase()}`;
-  if(heroLink){heroLink.href=selected.href;heroLink.setAttribute('aria-label',`Abrir case ${selected.dataset.project}`);}
+  if(moveFocus)selected.focus({preventScroll:true});
+  if(heroSelection){
+    heroSelection.replaceChildren();
+    const count=document.createElement('span'),name=document.createElement('span');
+    count.className='hero-selected-count';count.textContent=`${String(heroSelected+1).padStart(2,'0')} / ${String(fanCards.length).padStart(2,'0')}`;
+    name.className='hero-selected-name';name.textContent=selected.dataset.project.toUpperCase();
+    heroSelection.append(count,' ',name);
+  }
+  if(heroLink){heroLink.href=selected.href;heroLink.setAttribute('aria-label',selected.getAttribute('aria-label'));}
 }
 document.querySelector('.hero-side-left')?.addEventListener('click',()=>selectHeroProject(heroSelected-1,true));
 document.querySelector('.hero-side-right')?.addEventListener('click',()=>selectHeroProject(heroSelected+1,true));
@@ -116,19 +136,63 @@ document.querySelector('.hero-side-right')?.addEventListener('click',()=>selectH
     },320);
   };
   heroFanEl.addEventListener('pointermove',e=>{
+    if(heroMobile.matches){stopHoverAdvance();return;}
     if(!e.target.closest('.hero-project')||areAllCardsVisible()){stopHoverAdvance();return;}
     const r=heroFanEl.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),zone=r.width*.12;
     startHoverAdvance(dx>zone?1:dx<-zone?-1:0);
   });
   heroFanEl.addEventListener('pointerleave',stopHoverAdvance);
   addEventListener('scroll',()=>{if(hoverDir&&areAllCardsVisible())stopHoverAdvance();},{passive:true});
-  addEventListener('resize',()=>{if(hoverDir&&areAllCardsVisible())stopHoverAdvance();},{passive:true});
+  addEventListener('resize',()=>{if(heroMobile.matches||(hoverDir&&areAllCardsVisible()))stopHoverAdvance();},{passive:true});
 })();
-fanCards.forEach((card,i)=>card.addEventListener('focus',()=>selectHeroProject(i)));
-document.getElementById('hero-fan')?.addEventListener('keydown',e=>{
+heroFan?.addEventListener('focusin',e=>{
+  const i=fanCards.indexOf(e.target.closest('.hero-project'));
+  if(i>=0&&i!==heroSelected&&!heroMobile.matches)selectHeroProject(i);
+});
+heroFan?.addEventListener('keydown',e=>{
   if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();selectHeroProject(heroSelected+(e.key==='ArrowRight'?1:-1),true);if(e.target!==e.currentTarget)fanCards[heroSelected].focus({preventScroll:true});}
   if(e.target===e.currentTarget&&e.key==='Enter'){e.preventDefault();heroLink?.click();}
 });
+// Keep native vertical scrolling and pinch zoom; only a deliberate horizontal drag changes projects.
+if(heroFan){
+  let gesture=null,suppressClickUntil=0;
+  const clearDrag=()=>{heroFan.style.removeProperty('--drag-x');heroFan.classList.remove('is-dragging');gesture=null;};
+  heroFan.addEventListener('pointerdown',e=>{
+    if(!heroMobile.matches||!e.isPrimary||e.button!==0)return;
+    gesture={id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,dragging:false};
+  });
+  heroFan.addEventListener('pointermove',e=>{
+    if(!gesture||gesture.id!==e.pointerId)return;
+    const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;
+    if(!gesture.dragging){
+      if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){clearDrag();return;}
+      if(Math.abs(dx)<12||Math.abs(dx)<Math.abs(dy)*1.3)return;
+      gesture.dragging=true;heroFan.setPointerCapture(e.pointerId);heroFan.classList.add('is-dragging');
+    }
+    gesture.dx=dx;
+    heroFan.style.setProperty('--drag-x',`${Math.max(-90,Math.min(90,dx*.55))}px`);
+  });
+  heroFan.addEventListener('pointerup',e=>{
+    if(!gesture||gesture.id!==e.pointerId)return;
+    const {dx,dragging}=gesture;
+    if(dragging)suppressClickUntil=performance.now()+400;
+    clearDrag();
+    if(dragging&&Math.abs(dx)>=45)selectHeroProject(heroSelected+(dx<0?1:-1),true);
+  });
+  heroFan.addEventListener('pointercancel',clearDrag);
+  heroFan.addEventListener('lostpointercapture',clearDrag);
+  heroFan.addEventListener('click',e=>{if(performance.now()<suppressClickUntil){e.preventDefault();e.stopPropagation();}},true);
+  heroFan.addEventListener('click',e=>{
+    if(e.defaultPrevented||!heroMobile.matches)return;
+    const i=fanCards.indexOf(e.target.closest('.hero-project'));
+    if(i>=0&&i!==heroSelected){e.preventDefault();selectHeroProject(i,true);}
+  });
+  heroMobile.addEventListener('change',()=>{clearDrag();selectHeroProject(heroSelected);});
+  window.addEventListener('ns:hero-rendered',()=>{
+    fanCards=Array.from(heroFan.querySelectorAll('.hero-project'));
+    selectHeroProject(heroSelected);
+  });
+}
 selectHeroProject(0);
 const heroStage = document.querySelector('.hero-stage');
 if (heroStage) {

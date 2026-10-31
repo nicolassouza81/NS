@@ -24,6 +24,10 @@
       "hero.statement": "DESIGN DE EXPERIÊNCIAS DIGITAIS COM PROPÓSITO E FORMA.",
       "hero.orbit_title": "DESIGN EM<br>ÓRBITA.",
       "hero.orbit_sub": "IDEIA · FORMA<br>EXPERIÊNCIA",
+      "hero.swipe_hint": "Deslize para explorar · Toque no destaque para abrir",
+      "hero.fan_label": "Projetos em órbita. Use as setas para navegar e Enter para abrir o projeto selecionado.",
+      "hero.previous": "Destacar projeto anterior",
+      "hero.next": "Destacar próximo projeto",
 
       // Section 01: Work Index
       "work.kicker": "01 / MAIS PROJETOS",
@@ -131,6 +135,10 @@
       "hero.statement": "DIGITAL EXPERIENCE DESIGN WITH PURPOSE AND CRAFT.",
       "hero.orbit_title": "DESIGN IN<br>ORBIT.",
       "hero.orbit_sub": "IDEA · FORM<br>EXPERIENCE",
+      "hero.swipe_hint": "Swipe to explore · Tap the featured card to open",
+      "hero.fan_label": "Projects in orbit. Use the arrow keys to navigate and Enter to open the selected project.",
+      "hero.previous": "Highlight previous project",
+      "hero.next": "Highlight next project",
 
       // Section 01: Work Index
       "work.kicker": "01 / MORE PROJECTS",
@@ -238,6 +246,10 @@
       "hero.statement": "DISEÑO DE EXPERIENCIAS DIGITALES CON PROPÓSITO Y FORMA.",
       "hero.orbit_title": "DISEÑO EN<br>ÓRBITA.",
       "hero.orbit_sub": "IDEA · FORMA<br>EXPERIENCIA",
+      "hero.swipe_hint": "Desliza para explorar · Toca la destacada para abrir",
+      "hero.fan_label": "Proyectos en órbita. Usa las flechas para navegar y Enter para abrir el proyecto seleccionado.",
+      "hero.previous": "Destacar proyecto anterior",
+      "hero.next": "Destacar próximo proyecto",
 
       // Section 01: Work Index
       "work.kicker": "01 / MÁS PROYECTOS",
